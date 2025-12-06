@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Formulario</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <meta name="theme-color" content="#712cf9">
+    </head>
+    <body>
+        <div class="container mt-5">
+            <form th:object="${Usuario}">
+<!--            method="post"       th:action="@{add}">-->
+
+                <h1 class="mb-4 text-center rounded shadow-sm"> Formulario </h1>
+                <div class="container text-center rounded shadow-sm">
+                    <div class="container text-center">
+                        <div class="mb-4 row align-items-start">
+
+                            <div class="col">
+                                <div class="row" th:if="${(Usuario.idUsuario == 0 && Direcciones[0].idDireccion == 0) || (Usuario.idUsuario != 0 && Usuario.Direcciones == null)}">
+                                    <i class="bi bi-person-fill-add"></i>
+                                    <h4 class="mb-4 text-center">Nombre</h4>
+
+                                    <div class="input-group mb-3">
+
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <i class="bi bi-person-circle"></i></span>
+                                            <input type="text"  class="form-control" placeholder="Nombre(s)" id="NombreAlumno" th:field="*{Nombre}">
+                                            <span class="text-danger" th:if="${#fields.hasErrors('Nombre')}" th:errors="*{Nombre}" ></span>
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <i class="bi bi-person-circle"></i></span>
+                                            <input type="text" class="form-control" placeholder="Apellido Paterno" id="ApellidoPaterno" th:field="*{ApellidoPaterno}">
+                                            <span class="text-danger" th:if="${#fields.hasErrors('ApellidoPaterno')}" th:errors="*{ApellidoPaterno}" ></span>
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <i class="bi bi-person-circle"></i></span>
+                                            <input type="text" class="form-control" placeholder="Apellido Materno" id="ApellidoMaterno" th:field="*{ApellidoMaterno}">
+                                            <span class="text-danger" th:if="${#fields.hasErrors('ApellidoMaterno')}" th:errors="*{ApellidoMaterno}" ></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <h4 class="mb-3 text-center">Datos de contacto</h4>
+                                        <div>
+                                            <div class="input-group">
+                                                <span class="input-group-text">
+                                                    <i class="bi bi-telephone-fill"></i>
+                                                </span>
+                                                <input type="text" class="form-control" placeholder="Telefono" id="Telefono" th:field="*{Telefono}">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('Telefono')}" th:errors="*{Telefono}" ></span>
+                                            </div>
+
+                                            <div class="input-group">
+                                                <span class="input-group-text">
+                                                    <i class="bi bi-envelope-at"></i>
+                                                </span>
+                                                <input type="text" class="form-control" placeholder="Email" id="Email" th:field="*{Email}">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('Email')}" th:errors="*{Email}" ></span>
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-text" id="basic-addon1">
+                                                    <i class="bi bi-phone"></i>
+                                                </span>
+
+                                                <input type="text" class="form-control" placeholder="Celular" id="Celular" th:field="*{Celular}">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('Celular')}" th:errors="*{Celular}" ></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <h4 class="mb-3">Información</h4>
+                                    <div class="input-group mb-3">
+
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <i class="bi bi-person-bounding-box"></i>
+                                            </span>
+                                            <input type="text" class="form-control" placeholder="Curp" id="Curp" th:field="*{Curp}">
+                                            <span class="text-danger" th:if="${#fields.hasErrors('Curp')}" th:errors="*{Curp}" ></span>
+
+                                        </div>
+
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <i class="bi bi-person"></i>
+                                            </span>
+                                            <input type="text" class="form-control" placeholder="Username" id="Username" th:field="*{Username}">
+                                            <span class="text-danger" th:if="${#fields.hasErrors('Username')}" th:errors="*{Username}" ></span>
+                                        </div>                               
+
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <i class="bi bi-person-lock"></i>
+                                            </span>
+                                            <input type="password"  th:value="*{password}" class="form-control" placeholder="Password" id="Password" th:field="*{Password}">
+                                            <span class="text-danger" th:if="${#fields.hasErrors('Password')}" th:errors="*{Password}" ></span>
+                                        </div>
+
+                                    </div>
+
+
+
+                                    <div class="input-group mb-3">
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <i class="bi bi-calendar-heart"></i>
+                                            </span>
+                                            <input type="date" class="form-control" placeholder="fechanacimiento" id="fechanacimiento" th:field="*{fechanacimiento}" th:value="*{fechanacimiento}">
+
+                                        </div>
+                                        <div class="container mb-4 align-items-start" id="sexo" th:field="*{sexo}" th:value="*{sexo}">
+                                            <i class="bi bi-person-standing"></i>
+                                            <input type="radio" class="btn btn-primary" name="sexo" value="H" placeholder="Hombre">
+                                            <i class="bi bi-person-standing-dress"></i>
+                                            <input type="radio" class="btn btn-primary" name="sexo" value="M" placeholder="Mujer">
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="row">
+                                        <label for="rolUsuario" class="form-label fw-bold">Rol</label>
+
+                                        <select class="form-control" th:field="*{rol.idRol}">
+                                            <option value=0> Selecciona un Rol</option>
+                                            <option th:each="rol : ${Roles}" th:text="${rol.Nombre}" th:value="${rol.idRol}"></option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                                <div class="col col-sm col-md mb-4">
+                                    <button class="btn btn-primary ">Editar info</button>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div th:if="${(Usuario.idUsuario == 0 && Usuario.Direcciones[0].idDireccion == 0) 
+                                     || (Usuario.idUsuario !=0 && Usuario.Direcciones[0].idDireccion > 0) 
+                                     || (Usuario.idUsuario !=0 && Usuario.Direcciones[0].idDireccion == 0)}">
+                                    <i class="bi bi-geo-alt-fill"></i>
+                                    <h4 class="text-center">Direccion</h4>
+
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text" id="basic-addon1">
+                                            <i class="bi bi-signpost-2-fill"></i></span>
+                                        <input type="text" class="form-control" placeholder="Calle" id="Calle" th:field="*{Direcciones[0].Calle}">
+
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text" id="basic-addon1">
+                                            <i class="bi bi-1-circle-fill"></i></span>
+                                        <input type="text" class="form-control" placeholder="Numero Interior" id="NumeroInterior" th:field="*{Direcciones[0].NumeroInterior}">
+
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text" id="basic-addon1">
+                                            <i class="bi bi-2-circle-fill"></i></span>
+                                        <input type="text" class="form-control" placeholder="Numero Exterior" id="NumeroExterior" th:field="*{Direcciones[0].NumeroExterior}">
+
+                                    </div>
+
+
+
+                                    <div class="row">
+                                        <label for="ddlpais" class="form-label fw-bold">Pais</label>
+                                        <select id="ddlpais" class="form-control">
+                                            <!--<option value=0> Selecciona un Pais</option>-->
+                                            <option value=0 selected>Selecciona un pais</option>
+                                            <!--<option value=1>México</option>-->
+                                            <option th:each=" pais : ${Paises}" th:text="${pais.Nombre}" th:value="${pais.idPais}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="row">
+                                        <label for="ddlestado" class="form-label fw-bold">Estado</label>
+                                        <select id="ddlestado" class="form-select" aria-label="Default select example">
+                                            <option value=0 selected>Selecciona un estado</option>
+                                        </select>
+                                    </div>
+                                    <div class="row">
+                                        <label for="ddlmunicipio" class="form-label fw-bold">Municipio</label>
+                                        <select id="ddlmunicipio" class="form-select" aria-label="Default select example">
+                                            <option value=0 selected>Selecciona un municipio</option>
+                                        </select>
+                                    </div>
+                                    <div class="row">
+                                        <label for="ddlcolonia" class="form-label fw-bold">Colonia</label>
+                                        <select id="ddlcolonia" class="form-select" aria-label="Default select example">
+                                            <option value=0 selected>Selecciona una colonia</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+
+                    </div>
+
+            </form>
+        </div>
+
+
+
+        <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+        
+        <script>
+
+            $(document).ready(function () {
+
+                console.log("iniciando")
+                $("#ddlpais").change(function () {
+                    if ($("#ddlpais").val() == 0) {
+                        $("#ddlestado").empty();
+                        $("#ddlestado").append("<option value=0 selected>Selecciona un estado</option>");
+                    } else {
+                        console.log("Primer Else")
+                        $.ajax({
+                            url: "/usuario/getEstadosByPais/" + $("#ddlpais").val(),
+                            method: 'GET',
+                            dataType: 'json',
+                            success: function (data, textStatus, jqXHR) {
+                                if (data.Correct) {
+                                    $("#ddlestado").empty();
+                                    $("#ddlestado").append("<option value=0 selected>Selecciona un estado</option>");
+                                    $.each(data.Objects, function (i, estado) {
+                                        $("#ddlestado").append("<option value=" + estado.idEstado + ">" + estado.nombre + "</option>");
+                                    })
+                                }
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                alert("Algo salio mal");
+                            }
+
+                        })
+                    }
+                });
+
+
+                $("#ddlestado").change(function () {
+                    if ($("#ddlestado").val() == 0) {
+                        $("#ddlmunicipio").empty();
+                        $("#ddlmunicipio").append("<option value=0 selected>Selecciona un municipio</option>");
+                    } else {
+                        console.log("municipio")
+                        $.ajax({
+                            url: "/usuario/getMunicipioByEstado/" + $("#ddlestado").val(),
+                            method: 'GET',
+                            dataType: 'json',
+                            success: function (data, textStatus, jqXHR) {
+                                if (data.Correct) {
+                                    $("#ddlmunicipio").empty();
+                                    $("#ddlmunicipio").append("<option value=0 selected>Selecciona un municipio</option>");
+                                    $.each(data.Objects, function (i, municipio) {
+                                        $("#ddlmunicipio").append("<option value=" + municipio.idMunicipio + ">" + municipio.nombre + "</option>");
+                                    })
+                                }
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                alert("Algo salio mal")
+                            }
+
+                        })
+                    }
+
+                });
+
+
+                $("#ddlmunicipio").change(function () {
+                    if ($("#ddlmunicipio").val() == 0) {
+                        $("#ddlcolonia").empty();
+                        $("#ddlcolonia").append("<option value=0 selected>Selecciona una colonia</option>");
+                    } else {
+                        console.log("colonia")
+                        $.ajax({
+                            url: "/usuario/getColoniaByMunicipio/" + $("#ddlmunicipio").val(),
+                            method: 'GET',
+                            dataType: 'json',
+                            success: function (data, textStatus, jqXHR) {
+                                if (data.Correct) {
+                                    $("#ddlcolonia").empty();
+                                    $("#ddlcolonia").append("<option value=0 selected>Selecciona una colonia</option>");
+                                    $.each(data.Objects, function (i, colonia) {
+                                        $("#ddlcolonia").append("<option value=" + colonia.idColonia + ">" + colonia.nombre + "</option>");
+                                    })
+                                }
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                alert("Algo salio mal")
+                            }
+
+                        })
+                    }
+
+                });
+
+            });
+
+        </script>
+
+    </body>
+    <html>

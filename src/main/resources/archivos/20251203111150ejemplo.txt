@@ -1,0 +1,2 @@
+Nombre|ApellidoPaterno|ApellidoMaterno|Telefono|fechanacimiento|Username|Email|Sexo|Celular|Curp|Password|IdRol
+juuli|Heras|d|6362565656|20-11-2002|usernamva|emal@gmail.com|h|3030100352|HEMJ020723HKCRNLA2|passwordddD1|0
