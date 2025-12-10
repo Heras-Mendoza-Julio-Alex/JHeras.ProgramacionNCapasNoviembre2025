@@ -7,6 +7,7 @@ import JHeras.ProgramacionNCapasNoviembre2025.DAO.MunicipioDAOImplementation;
 import JHeras.ProgramacionNCapasNoviembre2025.DAO.PaisDAOImplementation;
 import JHeras.ProgramacionNCapasNoviembre2025.DAO.RolDAOImplementation;
 import JHeras.ProgramacionNCapasNoviembre2025.DAO.UsuarioDAOImplementation;
+import JHeras.ProgramacionNCapasNoviembre2025.DAO.UsuarioJPADAOImplementation;
 import JHeras.ProgramacionNCapasNoviembre2025.ML.Direccion;
 import JHeras.ProgramacionNCapasNoviembre2025.ML.ErrorCarga;
 import JHeras.ProgramacionNCapasNoviembre2025.ML.Estado;
@@ -86,12 +87,19 @@ public class UsuarioController {
 
     @Autowired
     private ValidationService validatorService;
+    
+    @Autowired
+    private UsuarioJPADAOImplementation usuarioJPADAOImplementation;
 
     @GetMapping
     public String GetAll(Model model) {
-        Result result = usuarioDAOImplementation.GetAll();
-        model.addAttribute("Usuarios", result.Objects);
-        model.addAttribute("UsuariosBusqueda",new Usuario());
+        
+        Result result=usuarioJPADAOImplementation.getall();
+        
+       // Result result = usuarioDAOImplementation.GetAll();
+        model.addAttribute("Usuarios", result.Objects);        
+        model.addAttribute("usuarioBusqueda",new Usuario());
+        model.addAttribute("Roles",RolDAOImplementation.getAll().Objects);
         return "Usuario";
     }
 
@@ -104,7 +112,12 @@ public class UsuarioController {
         Result Presult = paisDAOImplementation.getAll();
         model.addAttribute("Paises", Presult.Objects);
 
-        model.addAttribute("Usuario", new Usuario());
+        Usuario usuario=new Usuario();
+        usuario.Direcciones=new ArrayList<>();
+        usuario.Direcciones.add(new Direccion());
+        
+        
+        model.addAttribute("Usuario", usuario);
         return "FormUsu";
     }
 
@@ -148,8 +161,8 @@ public class UsuarioController {
         redirectAttributes.addFlashAttribute("resultDelete", resultDelete);
         return "redirect:/usuario";
     }
-//    
-//     @GetMapping("deleteDireccion/{IdDireccion}")
+    
+//    @GetMapping("deleteDireccion/{IdDireccion}")
 //    public String DeleteDireccion(@PathVariable("IdDireccion") int IdDireccion, @PathVariable("IdUsuario") int IdUsuario, RedirectAttributes redirectAttributes) {
 //        //Result resultDelete = usuarioDAOImplementation.DeleteById(IdUsuario);
 //        Result resultDelete = new Result();
@@ -443,7 +456,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/CargaMasiva/procesar")
-    public String ProcesarArchivo(HttpSession sesion) {
+    public String ProcesarArchivo(HttpSession sesion, RedirectAttributes redirectAttributes) {
         String path = sesion.getAttribute("archivoCargaMasiva").toString();
 
         File archivo = new File(path);
@@ -459,16 +472,31 @@ public class UsuarioController {
         }
 
         Result result = usuarioDAOImplementation.AddCargaMasiva(usuarios);
+        if (result.Correct) {
+            result.object="Se realizo el registro";            
+        }else{
+            result.object="No se realizo la operación";
+        }
+        
+        redirectAttributes.addFlashAttribute("result",result);
+        
 
-        sesion.removeAttribute("archivoCargaMasiva");
+        
 
-        return "CargaMasiva";
+        return "redirect:/usuario/CargaMasiva";
+        //sesion.removeAttribute("archivoCargaMasiva");
     }
     
     @PostMapping("/search")
-    public String BuscarUsuarios(@ModelAttribute("UsuariosBusqueda")Usuario usuario){
+    public String BuscarUsuarios(@ModelAttribute("UsuariosBusqueda")Usuario usuario,Model model){
     
-        return  "redirect/Usuario";
+        model.addAttribute("usuarioBusqueda",new Usuario());
+
+
+        model.addAttribute("Roles",RolDAOImplementation.getAll().Objects);
+
+        model.addAttribute("Usuarios",usuarioDAOImplementation.BusquedaUsuarioDireccionAll(usuario).Objects);
+        return  "Usuario";
     }
 
 }

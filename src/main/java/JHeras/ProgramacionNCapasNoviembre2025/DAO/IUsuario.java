@@ -19,5 +19,5 @@ public interface IUsuario {
       
       public Result DeleteById(int IdUsuario);
       
-      public  Result BusquedaUsuarioDireccionAll(Usuario usuario);
+      public Result BusquedaUsuarioDireccionAll(Usuario usuario);
 }

@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.naming.java.javaURLContextFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -309,8 +308,9 @@ public class UsuarioDAOImplementation implements IUsuario {
 
                 CallableStatement.setString(11, usuario.getPassword());
                 CallableStatement.setInt(12, usuario.Rol.getIdRol());
-
+                
             });
+            result.Correct=true;
         } catch (Exception ex) {
             result.Correct = false;
             result.ErrorMessage = ex.getLocalizedMessage();
@@ -352,7 +352,7 @@ public class UsuarioDAOImplementation implements IUsuario {
         try {
             result.Correct = jdbcTemplate.execute("{CALL UPDATEUSUARIOBYID(?,?,?,?,?,?,?,?,?,?,?,?,?}", (CallableStatementCallback<Boolean>) callableStatementCallback -> {
                 callableStatementCallback.setInt(1, IdUsuario);
-                Usuario usuario=new Usuario();
+                Usuario usuario = new Usuario();
                 callableStatementCallback.setString(2, usuario.getNombre());
                 callableStatementCallback.setString(3, usuario.getApellidoPaterno());
                 callableStatementCallback.setString(4, usuario.getApellidoMaterno());
@@ -381,27 +381,92 @@ public class UsuarioDAOImplementation implements IUsuario {
 
         return result;
     }
-    
+
     @Override
-    public  Result BusquedaUsuarioDireccionAll(Usuario usuario){
+    public Result BusquedaUsuarioDireccionAll(Usuario usuario) {
         Result result = new Result();
         try {
-            result.Correct=jdbcTemplate.execute("{Call BusquedaUsuarioDireccionAll(?,?,?,?)}",(CallableStatementCallback<Boolean>) callableStatementCallback->{
+            result.Correct = jdbcTemplate.execute("{Call BusquedaUsuarioDireccionAll(?,?,?,?,?)}", (CallableStatementCallback<Boolean>) callableStatement -> {
+                callableStatement.setString(1, usuario.getNombre());
+                callableStatement.setString(2, usuario.getApellidoMaterno());
+                callableStatement.setString(3, usuario.getApellidoPaterno());
                 
-            return true;
-        });
-       
-               
-       
-            
+                callableStatement.setInt(4,usuario.Rol.getIdRol());
+                
+                callableStatement.registerOutParameter(5, java.sql.Types.REF_CURSOR);
+                callableStatement.execute();
+
+                ResultSet resultset = (ResultSet) callableStatement.getObject(5);
+
+                result.Objects=new ArrayList<>();
+                
+                while (resultset.next()) {
+
+                    int idUsuarioIngresar = resultset.getInt("idusuario");
+
+                    if (!result.Objects.isEmpty() && ((Usuario) result.Objects.get(result.Objects.size() - 1)).getIdUsuario() == idUsuarioIngresar) {
+                        Direccion direccion = new Direccion();
+                        direccion.setIdDireccion(resultset.getInt("idDireccion"));
+                        direccion.setCalle(resultset.getString("calle"));
+                        direccion.setNumeroExterior(resultset.getString("NumeroExterior"));
+                        direccion.setNumeroInterior(resultset.getString("NumeroInterior"));
+
+                        direccion.Colonia = new Colonia();
+                        direccion.Colonia.setIdColonia(resultset.getInt("idColonia"));
+                        direccion.Colonia.setNombre(resultset.getString("NombreColonia"));
+
+                        Usuario usuarioB = ((Usuario) result.Objects.get(result.Objects.size() - 1));
+                        usuario.Direcciones.add(direccion);
+
+                    } else {
+
+                        Usuario usuarioB = new Usuario();
+                        usuario.setIdUsuario(idUsuarioIngresar);
+                        usuario.setNombre(resultset.getString("NombreUsuario"));
+
+                        usuario.setApellidoPaterno(resultset.getString("apellidopaterno"));
+                        usuario.setApellidoMaterno(resultset.getString("apellidomaterno"));
+                        usuario.setTelefono(resultset.getString("telefono"));
+                        usuario.setFechanacimiento(resultset.getDate("fechanacimiento"));
+                        usuario.setEmail(resultset.getString("email"));
+                        usuario.setSexo(resultset.getString("sexo"));
+                        usuario.setCelular(resultset.getString("celular"));
+                        usuario.setCurp(resultset.getString("curp"));
+                        usuario.setPassword(resultset.getString("password"));
+                        usuario.setUsername(resultset.getString("username"));
+                        int IdDireccion = resultset.getInt("idDireccion");
+
+                        if (IdDireccion != 0) {
+
+                            usuario.Direcciones = new ArrayList<>();
+
+                            Direccion direccion = new Direccion();
+                            direccion.setIdDireccion(resultset.getInt("idDireccion"));
+                            direccion.setCalle(resultset.getString("calle"));
+                            direccion.setNumeroExterior(resultset.getString("NumeroExterior"));
+                            direccion.setNumeroInterior(resultset.getString("NumeroInterior"));
+
+                            direccion.Colonia = new Colonia();
+                            direccion.Colonia.setIdColonia(resultset.getInt("idColonia"));
+                            direccion.Colonia.setNombre(resultset.getString("NombreColonia"));
+
+                            usuario.Direcciones.add(direccion);
+                        }
+
+                        result.Objects.add(usuario);
+
+                    }
+                }
+                return true;
+            });
+
         } catch (Exception ex) {
-            result.Correct=false;
-            result.ErrorMessage=ex.getLocalizedMessage();
-            result.ex=ex;
+            result.Correct = false;
+            result.ErrorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
         }
-                
-        
-        return  result;
+
+        return result;
     }
 
 }

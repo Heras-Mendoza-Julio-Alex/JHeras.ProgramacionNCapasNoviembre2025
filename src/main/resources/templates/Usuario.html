@@ -11,18 +11,28 @@
 
     </head>
     <body class="container">
-        <h1 class="card text-center bg-success text-light">Información de Usuarios
-            <a th:href="@{/usuario/form}" class="btn btn-info"><i class="bi bi-file-earmark-text"></i>Formulario</a></h1>
-
+        
+        <h1 class="card text-center bg-success text-light">Información de Usuarios</h1>
+                 
         <div>
+            <div class="text-center d-grid gap-2 d-md-block mb-3">
+                <a th:href="@{/usuario/form}" class="btn btn-info"><i class="bi bi-file-earmark-text"></i>Formulario</a>
+                <a th:href="@{/usuario/CargaMasiva}" class="btn btn-secondary"><i class="bi bi-file-earmark-text"></i>Carga Masiva</a>
+            </div>
             <section class="container">
-                <form class="mb-3" method="post" th:object="${UsuariosBusqueda}" th:action="@{search}">
+                <form class="mb-3" method="post" th:object="${usuarioBusqueda}" th:action="@{usuario/search}">
                     <div class="input-group">
                         <label class="input-group-text">BUSQUEDA:</label>
-                        <input type="text" class="form-control" placeholder="Nombre" />
-                        <input type="text" class="form-control" placeholder="Apellido Paterno" />
-                        <input type="text" class="form-control" placeholder="Apellido Materno" />
-                        <input type="text" class="form-control" placeholder="Rol" />
+                        <input type="text" class="form-control" placeholder="Nombre" id="nombre" th:field="*{Nombre}"/>
+                        <input type="text" class="form-control" placeholder="Apellido Paterno" th:field="*{ApellidoPaterno}"/>
+                        <input type="text" class="form-control" placeholder="Apellido Materno"th:field="*{ApellidoMaterno}" />
+
+
+                        <select class="form-control" th:field="*{rol.idRol}">
+                            <option value=0> Selecciona un Rol</option>
+                            <option th:each="rol : ${Roles}" th:text="${rol.nombre}" th:value="${rol.IdRol}"></option>
+                        </select>
+
                         <button type="submit" class="btn btn-warning">
                             <i class="bi bi-search"></i>
                         </button>

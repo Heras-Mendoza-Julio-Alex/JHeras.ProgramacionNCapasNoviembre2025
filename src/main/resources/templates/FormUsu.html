@@ -20,7 +20,7 @@
                         <div class="mb-4 row align-items-start">
 
                             <div class="col">
-                                <div class="row" th:if="${(Usuario.idUsuario == 0 && Direcciones[0].idDireccion == 0) || (Usuario.idUsuario != 0 && Usuario.Direcciones == null)}">
+                                <div class="row" th:if="${(Usuario.idUsuario == 0 && Direcciones[0].idDireccion == 0) || (Usuario.idUsuario != 0 && Usuario.Direcciones == -1)}">
                                     <i class="bi bi-person-fill-add"></i>
                                     <h4 class="mb-4 text-center">Nombre</h4>
 
