@@ -34,13 +34,12 @@ public class Direccion {
     @ManyToOne
     @JoinColumn(name = "idcolonia_fk")
     public Colonia Colonia;
-            
 
     public int getIdDireccion() {
         return idDireccion;
     }
 
-    public void setIdDireccion(int IdDireccion) {
+    public void setIdDireccion(int idDireccion) {
         this.idDireccion = idDireccion;
     }
 
@@ -67,6 +66,22 @@ public class Direccion {
     public void setNumeroExterior(String NumeroExterior) {
         this.NumeroExterior = NumeroExterior;
     }
-    
+
+    public Usuario getUsuario() {
+        return Usuario;
+    }
+
+    public void setUsuario(Usuario Usuario) {
+        this.Usuario = Usuario;
+    }
+
+    public Colonia getColonia() {
+        return Colonia;
+    }
+
+    public void setColonia(Colonia Colonia) {
+        this.Colonia = Colonia;
+    }
+
     
 }

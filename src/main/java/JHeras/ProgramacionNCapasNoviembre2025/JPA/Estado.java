@@ -39,5 +39,13 @@ public class Estado {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }        
+
+    public Pais getPais() {
+        return Pais;
+    }
+
+    public void setPais(Pais Pais) {
+        this.Pais = Pais;
+    }
     
 }

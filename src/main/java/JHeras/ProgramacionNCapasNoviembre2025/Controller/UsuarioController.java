@@ -44,6 +44,7 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -87,19 +88,19 @@ public class UsuarioController {
 
     @Autowired
     private ValidationService validatorService;
-    
+
     @Autowired
     private UsuarioJPADAOImplementation usuarioJPADAOImplementation;
 
     @GetMapping
     public String GetAll(Model model) {
-        
-        Result result=usuarioJPADAOImplementation.getall();
-        
-       // Result result = usuarioDAOImplementation.GetAll();
-        model.addAttribute("Usuarios", result.Objects);        
-        model.addAttribute("usuarioBusqueda",new Usuario());
-        model.addAttribute("Roles",RolDAOImplementation.getAll().Objects);
+
+        Result result = usuarioJPADAOImplementation.getall();
+
+        // Result result = usuarioDAOImplementation.GetAll();
+        model.addAttribute("Usuarios", result.Objects);
+        model.addAttribute("usuarioBusqueda", new Usuario());
+        model.addAttribute("Roles", RolDAOImplementation.getAll().Objects);
         return "Usuario";
     }
 
@@ -112,28 +113,40 @@ public class UsuarioController {
         Result Presult = paisDAOImplementation.getAll();
         model.addAttribute("Paises", Presult.Objects);
 
-        Usuario usuario=new Usuario();
-        usuario.Direcciones=new ArrayList<>();
+        Usuario usuario = new Usuario();
+        usuario.Direcciones = new ArrayList<>();
         usuario.Direcciones.add(new Direccion());
-        
-        
+
         model.addAttribute("Usuario", usuario);
         return "FormUsu";
     }
 
     @PostMapping("add")
-    public String Add(@Valid @ModelAttribute("Usuario") Usuario usuario, BindingResult bindingResult, Model model) {
+    public String saveOrUpdate(@Valid @ModelAttribute("Usuario") Usuario usuario,
+            BindingResult bindingResult, Model model) {
 
-        if (bindingResult.hasErrors()) {
+//        if (bindingResult.hasErrors()) {
+//            model.addAttribute("Usuario", usuario);
+//            return "FormUsu"; // Vuelve al formulario si hay errores
+//        }
 
-            model.addAttribute("Usuario", usuario);
+        ModelMapper modelMapper = new ModelMapper();
+        JHeras.ProgramacionNCapasNoviembre2025.JPA.Usuario usuarioJPA
+                = modelMapper.map(usuario, JHeras.ProgramacionNCapasNoviembre2025.JPA.Usuario.class);
 
-            return "FormUsu";
+        Result result;
+        if (usuarioJPA.getIdUsuario()== 0) {
+            // Si el id es 0, agregamos un nuevo usuario
+            result = usuarioJPADAOImplementation.add(usuarioJPA);
         } else {
-            Result result = usuarioDAOImplementation.Add(usuario);
+            // Si el id ya existe, hacemos update
+            result = usuarioJPADAOImplementation.edit(usuario);
         }
 
-        return "Usuario";
+        // Aquí puedes manejar el resultado si quieres mostrar mensajes
+        model.addAttribute("result", result);
+
+        return "redirect:/usuario"; 
     }
 
     @GetMapping("detail/{IdUsuario}")
@@ -161,7 +174,7 @@ public class UsuarioController {
         redirectAttributes.addFlashAttribute("resultDelete", resultDelete);
         return "redirect:/usuario";
     }
-    
+
 //    @GetMapping("deleteDireccion/{IdDireccion}")
 //    public String DeleteDireccion(@PathVariable("IdDireccion") int IdDireccion, @PathVariable("IdUsuario") int IdUsuario, RedirectAttributes redirectAttributes) {
 //        //Result resultDelete = usuarioDAOImplementation.DeleteById(IdUsuario);
@@ -177,7 +190,6 @@ public class UsuarioController {
 //        redirectAttributes.addFlashAttribute("resultDelete", resultDelete);
 //        return "redirect:/usuario/detail/"+IdUsuario;
 //    }
-
     @GetMapping("getEstadosByPais/{idPais}")
     @ResponseBody
     public Result EstadosByPais(@PathVariable("idPais") int idPais) {
@@ -200,7 +212,6 @@ public class UsuarioController {
         return resultMunicipios;
     }
 
-    
     @GetMapping("/formEditable")
     public String Form(@RequestParam("idUsuario") int idUsuario, @RequestParam(required = false) Integer IdDireccion, Model model) {
         if (IdDireccion == null) { // editar usuario
@@ -208,15 +219,20 @@ public class UsuarioController {
 
             Result resultRoles = RolDAOImplementation.getAll();
             model.addAttribute("Roles", resultRoles.Objects);
+
+            Usuario usuario = (Usuario) result.object;
+            usuario.Direcciones = new ArrayList<>();
+            usuario.Direcciones.add(new Direccion());
+            usuario.Direcciones.get(0).setIdDireccion(-1);
+
             model.addAttribute("Usuario", result.object);
+
             return "FormUsu";
         } else if (IdDireccion == 0) { //Aregar direccion
             //Formulario de direccion sin datos
             Result result = usuarioDAOImplementation.GetByIDU(idUsuario);
 
             model.addAttribute("Paises", paisDAOImplementation.getAll().Objects);
-
-            model.addAttribute("Usuario", result.object);
 
             Usuario usuario = (Usuario) result.object;
             if (usuario.Direcciones == null) {
@@ -226,9 +242,25 @@ public class UsuarioController {
                 usuario.Direcciones.add(direccion);
             }
 
+            model.addAttribute("Usuario", result.object);
+
             return "FormUsu";
         } else {// Editar Direccion
             //Retornar formulario direccion con datos
+            //Result result = DireccionDAOImplementation.GetByIDUD(IdDireccion, idUsuario);
+//            Result result = DireccionDAOImplementation.getbyIDD(IdDireccion);
+//            
+//            Direccion direccion = (Direccion) result.object;
+//
+//            Usuario usuario = new Usuario();
+//            usuario.setIdUsuario(idUsuario);
+//
+//            usuario.Direcciones = new ArrayList<>();
+//            usuario.Direcciones.add(direccion);
+//            
+//            model.addAttribute("Paises", paisDAOImplementation.getAll().Objects);
+//            model.addAttribute("Usuario", result.object);
+
             Result result = DireccionDAOImplementation.GetByIDUD(IdDireccion, idUsuario);
             model.addAttribute("Paises", paisDAOImplementation.getAll().Objects);
             model.addAttribute("Usuario", result.object);
@@ -241,13 +273,18 @@ public class UsuarioController {
     public String Form(@ModelAttribute Usuario usuario, Model model) {
 
         if (usuario.getIdUsuario() == 0) {
-            //agregar usuario-direccion /probar sp
+            ModelMapper modelMapper = new ModelMapper();
+
+            JHeras.ProgramacionNCapasNoviembre2025.JPA.Usuario usuarioJPA = modelMapper.map(usuario, JHeras.ProgramacionNCapasNoviembre2025.JPA.Usuario.class);
+
+            Result resultadd = usuarioJPADAOImplementation.add(usuarioJPA);
 
         } else if (usuario.Direcciones.get(0).getIdDireccion() == -1) {
             //Actualizar usuario //probar sp
             //usuarioDAOImplementation.UpdateUsuarioid(usuario);
             int idusuario = usuario.getIdUsuario();
-            Result result = usuarioDAOImplementation.UpdateUsuarioid(idusuario);
+            //         Result result = usuarioJPADAOImplementation.edit(usuario);
+
             return "redirect:/usuario/Detail/" + idusuario;
 
         } else if (usuario.Direcciones.get(0).getIdDireccion() == 0) {
@@ -255,7 +292,7 @@ public class UsuarioController {
 
         } else {
             //Actualizar Direccion //probar sp
-
+            //         Result result = usuarioJPADAOImplementation.edit(usuario);
         }
         return null;
 
@@ -473,30 +510,26 @@ public class UsuarioController {
 
         Result result = usuarioDAOImplementation.AddCargaMasiva(usuarios);
         if (result.Correct) {
-            result.object="Se realizo el registro";            
-        }else{
-            result.object="No se realizo la operación";
+            result.object = "Se realizo el registro";
+        } else {
+            result.object = "No se realizo la operación";
         }
-        
-        redirectAttributes.addFlashAttribute("result",result);
-        
 
-        
+        redirectAttributes.addFlashAttribute("result", result);
 
         return "redirect:/usuario/CargaMasiva";
         //sesion.removeAttribute("archivoCargaMasiva");
     }
-    
+
     @PostMapping("/search")
-    public String BuscarUsuarios(@ModelAttribute("UsuariosBusqueda")Usuario usuario,Model model){
-    
-        model.addAttribute("usuarioBusqueda",new Usuario());
+    public String BuscarUsuarios(@ModelAttribute("UsuariosBusqueda") Usuario usuario, Model model) {
 
+        model.addAttribute("usuarioBusqueda", new Usuario());
 
-        model.addAttribute("Roles",RolDAOImplementation.getAll().Objects);
+        model.addAttribute("Roles", RolDAOImplementation.getAll().Objects);
 
-        model.addAttribute("Usuarios",usuarioDAOImplementation.BusquedaUsuarioDireccionAll(usuario).Objects);
-        return  "Usuario";
+        model.addAttribute("Usuarios", usuarioDAOImplementation.BusquedaUsuarioDireccionAll(usuario).Objects);
+        return "Usuario";
     }
 
 }

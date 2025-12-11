@@ -33,8 +33,7 @@ public class Usuario {
     private String Telefono;
     
     //@NotEmpty(message = "El campo es requerido")
-    @DateTimeFormat(pattern = "dd-MM-yyyy") 
-    
+    @DateTimeFormat(pattern = "yyyy-MM-dd") 
     private Date fechanacimiento;
     
     @NotEmpty(message = "El campo es requerido")

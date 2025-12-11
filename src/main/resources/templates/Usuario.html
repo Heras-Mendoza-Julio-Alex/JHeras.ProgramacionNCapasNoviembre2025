@@ -11,9 +11,9 @@
 
     </head>
     <body class="container">
-        
+
         <h1 class="card text-center bg-success text-light">Información de Usuarios</h1>
-                 
+
         <div>
             <div class="text-center d-grid gap-2 d-md-block mb-3">
                 <a th:href="@{/usuario/form}" class="btn btn-info"><i class="bi bi-file-earmark-text"></i>Formulario</a>
@@ -46,6 +46,7 @@
                     <th class="col-3">Nombre</th>
                     <th class="col-3">Información</th>
                     <th class="col-4">Direcciones</th>
+                    <th >Estatus</th>
                 </tr>
 
                 <tr th:each="usuario : ${Usuarios}">
@@ -65,16 +66,18 @@
                         <ul>
                             <li th:text="${usuario.telefono}"></li>
                             <li th:text="${usuario.fechanacimiento}"></li>
+                            <li th:text="${usuario.username}"></li>
                             <li th:text="${usuario.email}"></li>
                             <li th:text="${usuario.sexo}"></li>  
-
+                            <li th:text="${usuario.celular}"></li>  
+                            <li th:text="${usuario.curp}"></li>  
 
                         </ul>
                     </td>
 
                     <td>
                         <ul th:if="${usuario.Direcciones != null}">
-                            <li th:each="direccion : ${usuario.Direcciones}" th:text="|${direccion.Calle} ${direccion.NumeroInterior}|"></li>
+                            <li th:each="direccion : ${usuario.Direcciones}" th:text="|${direccion.Calle} ${direccion.NumeroInterior} ${direccion.NumeroExterior}|"></li>
                         </ul>
                         <ul th:unless="${usuario.Direcciones != null}">
                             <li>Sin dirección.</li>
@@ -82,9 +85,18 @@
 
                     </td>
 
+                    <td class="align-middle">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
+<!--                            <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>-->
+                        </div>
+                    </td>
+
 
 
                 </tr>
+
+
 
             </table>
         </div>

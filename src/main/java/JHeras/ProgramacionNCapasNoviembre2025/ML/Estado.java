@@ -31,4 +31,13 @@ public class Estado {
  public void setNombre(String nombre){
      this.nombre=nombre;
  }
+
+    public List<Pais> getPaises() {
+        return Paises;
+    }
+
+    public void setPaises(List<Pais> Paises) {
+        this.Paises = Paises;
+    }
+ 
 }

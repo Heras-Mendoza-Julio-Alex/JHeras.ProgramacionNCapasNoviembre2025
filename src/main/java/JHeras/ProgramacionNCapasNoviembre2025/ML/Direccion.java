@@ -23,6 +23,7 @@ public class Direccion {
     private String NumeroExterior;
     
     public Colonia Colonia;
+    
     public Usuario Usuario;
 
     public int getIdDireccion() {
@@ -64,4 +65,13 @@ public class Direccion {
     public void setColonia(Colonia Colonia){
         this.Colonia=Colonia;
     }
+
+    public Usuario getUsuario() {
+        return Usuario;
+    }
+
+    public void setUsuario(Usuario Usuario) {
+        this.Usuario = Usuario;
+    }
+    
 }

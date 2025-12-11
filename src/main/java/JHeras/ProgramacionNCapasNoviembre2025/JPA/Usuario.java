@@ -12,7 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Date;
 
 @Entity
 @Table(name = "USUARIO")
@@ -36,7 +36,7 @@ public class Usuario {
     private String Telefono;
     
     @Column(name = "FECHANACIMIENTO",nullable = false)
-    private String fechanacimiento;
+    private Date fechanacimiento;
     
     @Column(name = "USERNAME",nullable = false)
     private String Username;
@@ -62,7 +62,6 @@ public class Usuario {
     
     @OneToMany(mappedBy = "Usuario",cascade=CascadeType.ALL,orphanRemoval = true)
     public List<Direccion> Direcciones = new ArrayList<>();
-            
 
     public int getIdUsuario() {
         return IdUsuario;
@@ -104,11 +103,11 @@ public class Usuario {
         this.Telefono = Telefono;
     }
 
-    public String getFechanacimiento() {
+    public Date getFechanacimiento() {
         return fechanacimiento;
     }
 
-    public void setFechanacimiento(String fechanacimiento) {
+    public void setFechanacimiento(Date fechanacimiento) {
         this.fechanacimiento = fechanacimiento;
     }
 
@@ -116,8 +115,16 @@ public class Usuario {
         return Username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(String Username) {
         this.Username = Username;
+    }
+
+    public String getEmail() {
+        return Email;
+    }
+
+    public void setEmail(String Email) {
+        this.Email = Email;
     }
 
     public String getSexo() {
@@ -150,14 +157,23 @@ public class Usuario {
 
     public void setPassword(String password) {
         this.password = password;
+    }         
+
+    public Rol getRol() {
+        return Rol;
     }
 
-    public String getEmail() {
-        return Email;
+    public void setRol(Rol Rol) {
+        this.Rol = Rol;
     }
 
-    public void setEmail(String Email) {
-        this.Email = Email;
+    public List<Direccion> getDirecciones() {
+        return Direcciones;
+    }
+
+    public void setDirecciones(List<Direccion> Direcciones) {
+        this.Direcciones = Direcciones;
     }
   
+    
 }

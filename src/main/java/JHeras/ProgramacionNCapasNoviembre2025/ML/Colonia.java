@@ -10,11 +10,11 @@ public class Colonia {
     public Colonia(){
     }
     
-    public Colonia(int idColonia,String nombre,String codigopostal){
-        this.idColonia=idColonia;
-        this.nombre=nombre;
-        this.codigopostal=codigopostal;
-    }
+//    public Colonia(int idColonia,String nombre,String codigopostal){
+//        this.idColonia=idColonia;
+//        this.nombre=nombre;
+//        this.codigopostal=codigopostal;
+//    }
     
 
     public int getIdColonia() {

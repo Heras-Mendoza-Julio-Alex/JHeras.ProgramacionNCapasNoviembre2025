@@ -33,21 +33,20 @@ public class DireccionDAOImplementation implements IDireccion {
 
                 ResultSet resultSet = (ResultSet) callableStatement.getObject(1);
 
-                while (resultSet.next()) {
-                    Direccion direccion = new Direccion();
+                 if (resultSet.next()) {
+                    Usuario  usuario = new Usuario();
+                    usuario.setIdUsuario(resultSet.getInt("idusuario_fk"));
+                    usuario.Direcciones = new ArrayList<>();
+                    usuario.Direcciones.add(new Direccion());
+                    usuario.Direcciones.get(0).setIdDireccion(resultSet.getInt("iddireccion"));
+                    usuario.Direcciones.get(0).setCalle(resultSet.getString("calle"));
+                    usuario.Direcciones.get(0).setNumeroInterior(resultSet.getString("numerointerior"));
+                    usuario.Direcciones.get(0).setNumeroExterior(resultSet.getString("numeroexterior"));
 
-                    direccion.setIdDireccion(resultSet.getInt("iddireccion"));
-                    direccion.setCalle(resultSet.getString("calle"));
-                    direccion.setNumeroInterior(resultSet.getString("numerointerior"));
-                    direccion.setNumeroExterior(resultSet.getString("numeroexterior"));
-                    /*direccion.Usuario=new Usuario();
-                    
-                    direccion.Usuario.setIdUsuario(resultSet.getInt("idusuario_fk"));
-                     */
-                    result.object = direccion;
+                    result.object = usuario;
                 }
-
                 return true;
+
             });
 
         } catch (Exception ex) {
