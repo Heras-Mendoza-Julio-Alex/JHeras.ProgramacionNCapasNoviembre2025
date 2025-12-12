@@ -216,6 +216,36 @@ public class UsuarioDAOImplementation implements IUsuario {
 
                     }
                 }
+//                if (resultSet.next()) {
+//                    Usuario usuario = new Usuario();
+//                    usuario.setNombre(resultSet.getString("NombreUsuario"));
+//
+//                    int idDireccion = resultSet.getInt("IdDireccion"); // null -> 0
+//
+//                    if (idDireccion != 0) {
+//
+//                        usuario.Direcciones = new ArrayList<>();
+//
+//                        do {
+//                            Direccion direccion = new Direccion();
+//                            direccion.setIdDireccion(resultSet.getInt("idDireccion"));
+//                            direccion.setCalle(resultSet.getString("calle"));
+//                            direccion.setNumeroExterior(resultSet.getString("NumeroExterior"));
+//                            direccion.setNumeroInterior(resultSet.getString("NumeroInterior"));
+//
+//                            direccion.Colonia = new Colonia();
+//                            direccion.Colonia.setIdColonia(resultSet.getInt("idColonia"));
+//                            direccion.Colonia.setNombre(resultSet.getString("NombreColonia"));
+//
+//                            usuario.Direcciones.add(direccion);
+//                        } while (resultSet.next());
+//
+//                    }
+//
+//                    result.Correct = true;
+//                    result.object = usuario;
+//                }
+
                 return true;
             });
 
@@ -308,9 +338,9 @@ public class UsuarioDAOImplementation implements IUsuario {
 
                 CallableStatement.setString(11, usuario.getPassword());
                 CallableStatement.setInt(12, usuario.Rol.getIdRol());
-                
+
             });
-            result.Correct=true;
+            result.Correct = true;
         } catch (Exception ex) {
             result.Correct = false;
             result.ErrorMessage = ex.getLocalizedMessage();
@@ -390,16 +420,16 @@ public class UsuarioDAOImplementation implements IUsuario {
                 callableStatement.setString(1, usuario.getNombre());
                 callableStatement.setString(2, usuario.getApellidoMaterno());
                 callableStatement.setString(3, usuario.getApellidoPaterno());
-                
-                callableStatement.setInt(4,usuario.Rol.getIdRol());
-                
+
+                callableStatement.setInt(4, usuario.Rol.getIdRol());
+
                 callableStatement.registerOutParameter(5, java.sql.Types.REF_CURSOR);
                 callableStatement.execute();
 
                 ResultSet resultset = (ResultSet) callableStatement.getObject(5);
 
-                result.Objects=new ArrayList<>();
-                
+                result.Objects = new ArrayList<>();
+
                 while (resultset.next()) {
 
                     int idUsuarioIngresar = resultset.getInt("idusuario");

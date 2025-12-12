@@ -71,6 +71,7 @@
                             <li th:text="${usuario.sexo}"></li>  
                             <li th:text="${usuario.celular}"></li>  
                             <li th:text="${usuario.curp}"></li>  
+                            <li th:text="${usuario.estatus}"></li>  
 
                         </ul>
                     </td>
@@ -84,14 +85,16 @@
                         </ul>
 
                     </td>
-
-                    <td class="align-middle">
+                    <td>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
-<!--                            <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>-->
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   role="switch"
+                                   id="switchCheckDefault"
+                                   th:checked="${usuario.estatus == 1}">
                         </div>
-                    </td>
 
+                    </td>
 
 
                 </tr>
@@ -119,6 +122,9 @@
 
 
         </script>
+
+
+
 
         <script>
             console.log("Boton de eliminar");

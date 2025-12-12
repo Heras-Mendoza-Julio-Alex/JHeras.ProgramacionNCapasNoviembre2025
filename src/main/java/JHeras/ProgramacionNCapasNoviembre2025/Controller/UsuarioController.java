@@ -122,20 +122,19 @@ public class UsuarioController {
     }
 
     @PostMapping("add")
-    public String saveOrUpdate(@Valid @ModelAttribute("Usuario") Usuario usuario,
+    public String add(@Valid @ModelAttribute("Usuario") Usuario usuario,
             BindingResult bindingResult, Model model) {
 
 //        if (bindingResult.hasErrors()) {
 //            model.addAttribute("Usuario", usuario);
 //            return "FormUsu"; // Vuelve al formulario si hay errores
 //        }
-
         ModelMapper modelMapper = new ModelMapper();
         JHeras.ProgramacionNCapasNoviembre2025.JPA.Usuario usuarioJPA
                 = modelMapper.map(usuario, JHeras.ProgramacionNCapasNoviembre2025.JPA.Usuario.class);
 
         Result result;
-        if (usuarioJPA.getIdUsuario()== 0) {
+        if (usuarioJPA.getIdUsuario() == 0) {
             // Si el id es 0, agregamos un nuevo usuario
             result = usuarioJPADAOImplementation.add(usuarioJPA);
         } else {
@@ -146,19 +145,22 @@ public class UsuarioController {
         // Aquí puedes manejar el resultado si quieres mostrar mensajes
         model.addAttribute("result", result);
 
-        return "redirect:/usuario"; 
+        return "redirect:/usuario";
     }
 
     @GetMapping("detail/{IdUsuario}")
     public String Detail(@PathVariable("IdUsuario") int IdUsuario, Model model) {
 
         Result result = usuarioDAOImplementation.getById(IdUsuario);
+        Result Presult = paisDAOImplementation.getAll();
+        model.addAttribute("Paises", Presult.Objects);
         //model.addAttribute("usuario",result.Objects);
         Usuario usuario = (Usuario) result.Objects.get(0);
         model.addAttribute("usuario", usuario);
         return "UsuarioDetail";
     }
 
+    
     @GetMapping("delete/{IdUsuario}")
     public String Delete(@PathVariable("IdUsuario") int IdUsuario, RedirectAttributes redirectAttributes) {
         //Result resultDelete = usuarioDAOImplementation.DeleteById(IdUsuario);

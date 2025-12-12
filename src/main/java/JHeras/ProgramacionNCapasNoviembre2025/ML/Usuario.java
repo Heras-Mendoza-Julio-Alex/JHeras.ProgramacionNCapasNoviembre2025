@@ -65,6 +65,8 @@ public class Usuario {
     @Pattern(regexp = "^(?=\\w*\\d)(?=\\w*[A-Z])(?=\\w*[a-z])\\S{8,}$", message = "Ingresa una contraseña de mínimo 8 dígitos con al menos una mayúscula y número.")
     private String Password;
     
+    private Number estatus;
+    
     public Rol Rol;  
     public List<Direccion> Direcciones;
     
@@ -179,6 +181,14 @@ public class Usuario {
     
     public void setDirecciones(List<Direccion> Direcciones){
         this.Direcciones=Direcciones;
+    }
+
+    public Number getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(Number estatus) {
+        this.estatus = estatus;
     }
         
 }

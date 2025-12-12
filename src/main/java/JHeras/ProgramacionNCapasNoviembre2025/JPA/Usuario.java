@@ -56,6 +56,9 @@ public class Usuario {
     @Column(name = "PASSWORD")
     private String password;
     
+    @Column(name = "ESTATUS")
+    private int estatus;
+    
     @ManyToOne
     @JoinColumn (name = "IDROL")
     public Rol Rol;
@@ -66,7 +69,7 @@ public class Usuario {
     public int getIdUsuario() {
         return IdUsuario;
     }
-
+    
     public void setIdUsuario(int IdUsuario) {
         this.IdUsuario = IdUsuario;
     }
@@ -174,6 +177,14 @@ public class Usuario {
     public void setDirecciones(List<Direccion> Direcciones) {
         this.Direcciones = Direcciones;
     }
-  
+  //
+//    public Number getEstatus() {
+//        return estatus;
+//    }
+//
+//    public void setEstatus(Number estatus) {
+//        this.estatus = estatus;
+//    }
+
     
 }
