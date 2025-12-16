@@ -24,7 +24,7 @@ public class Direccion {
     
     public Colonia Colonia;
     
-    public Usuario Usuario;
+    //public Usuario Usuario;
 
     public int getIdDireccion() {
         return idDireccion;
@@ -66,12 +66,12 @@ public class Direccion {
         this.Colonia=Colonia;
     }
 
-    public Usuario getUsuario() {
-        return Usuario;
-    }
-
-    public void setUsuario(Usuario Usuario) {
-        this.Usuario = Usuario;
-    }
+//    public Usuario getUsuario() {
+//        return Usuario;
+//    }
+//
+//    public void setUsuario(Usuario Usuario) {
+//        this.Usuario = Usuario;
+//    }
     
 }

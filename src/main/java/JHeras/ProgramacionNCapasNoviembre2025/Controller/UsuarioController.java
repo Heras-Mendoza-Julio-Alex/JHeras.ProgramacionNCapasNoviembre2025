@@ -2,6 +2,7 @@ package JHeras.ProgramacionNCapasNoviembre2025.Controller;
 
 import JHeras.ProgramacionNCapasNoviembre2025.DAO.ColoniaDAOImplementation;
 import JHeras.ProgramacionNCapasNoviembre2025.DAO.DireccionDAOImplementation;
+import JHeras.ProgramacionNCapasNoviembre2025.DAO.DireccionJPADAOImplementation;
 import JHeras.ProgramacionNCapasNoviembre2025.DAO.EstadoDAOImplementation;
 import JHeras.ProgramacionNCapasNoviembre2025.DAO.MunicipioDAOImplementation;
 import JHeras.ProgramacionNCapasNoviembre2025.DAO.PaisDAOImplementation;
@@ -91,6 +92,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioJPADAOImplementation usuarioJPADAOImplementation;
+    
+    @Autowired
+    private DireccionJPADAOImplementation direccionJPADAOImplementation;
 
     @GetMapping
     public String GetAll(Model model) {
@@ -147,20 +151,32 @@ public class UsuarioController {
 
         return "redirect:/usuario";
     }
+    
+    
+    @GetMapping("/GetByIdDireccion/{IdDireccion}")
+    @ResponseBody
+    public Result GetByIdDireccion(@PathVariable int IdDireccion){
+        
+        Result result = direccionJPADAOImplementation.getById(IdDireccion);
+        
+        return result;
+    }
 
+    
+    
+    
     @GetMapping("detail/{IdUsuario}")
     public String Detail(@PathVariable("IdUsuario") int IdUsuario, Model model) {
 
         Result result = usuarioDAOImplementation.getById(IdUsuario);
         Result Presult = paisDAOImplementation.getAll();
         model.addAttribute("Paises", Presult.Objects);
-        //model.addAttribute("usuario",result.Objects);
-        Usuario usuario = (Usuario) result.Objects.get(0);
-        model.addAttribute("usuario", usuario);
+     
+        model.addAttribute("usuario", result.object);
+
         return "UsuarioDetail";
     }
 
-    
     @GetMapping("delete/{IdUsuario}")
     public String Delete(@PathVariable("IdUsuario") int IdUsuario, RedirectAttributes redirectAttributes) {
         //Result resultDelete = usuarioDAOImplementation.DeleteById(IdUsuario);
@@ -230,7 +246,7 @@ public class UsuarioController {
             model.addAttribute("Usuario", result.object);
 
             return "FormUsu";
-        } else if (IdDireccion == 0) { //Aregar direccion
+        } else if (IdDireccion == 0) { //Agregar direccion
             //Formulario de direccion sin datos
             Result result = usuarioDAOImplementation.GetByIDU(idUsuario);
 

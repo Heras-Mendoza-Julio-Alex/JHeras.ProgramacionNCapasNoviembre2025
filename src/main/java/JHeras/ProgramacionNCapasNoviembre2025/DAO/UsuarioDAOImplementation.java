@@ -157,48 +157,26 @@ public class UsuarioDAOImplementation implements IUsuario {
 
                 ResultSet resultSet = (ResultSet) callableStatement.getObject(1);
 
-                result.Objects = new ArrayList<>();
+                if (resultSet.next()) {
+                    Usuario usuario = new Usuario();
+                    usuario.setNombre(resultSet.getString("NombreUsuario"));
+                    usuario.setApellidoPaterno(resultSet.getString("apellidopaterno"));
+                    usuario.setApellidoMaterno(resultSet.getString("apellidomaterno"));
+                    usuario.setTelefono(resultSet.getString("telefono"));
+                    usuario.setFechanacimiento(resultSet.getDate("fechanacimiento"));
+                    usuario.setEmail(resultSet.getString("email"));
+                    usuario.setSexo(resultSet.getString("sexo"));
+                    usuario.setCelular(resultSet.getString("celular"));
+                    usuario.setCurp(resultSet.getString("curp"));
+                    usuario.setPassword(resultSet.getString("password"));
+                    usuario.setUsername(resultSet.getString("username"));
+                    int idDireccion = resultSet.getInt("IdDireccion"); // null -> 0
 
-                while (resultSet.next()) {
+                    if (idDireccion != 0) {
 
-                    int idUsuarioIngresar = resultSet.getInt("idusuario");
+                        usuario.Direcciones = new ArrayList<>();
 
-                    if (!result.Objects.isEmpty() && ((Usuario) result.Objects.get(result.Objects.size() - 1)).getIdUsuario() == idUsuarioIngresar) {
-                        Direccion direccion = new Direccion();
-                        direccion.setIdDireccion(resultSet.getInt("idDireccion"));
-                        direccion.setCalle(resultSet.getString("calle"));
-                        direccion.setNumeroExterior(resultSet.getString("NumeroExterior"));
-                        direccion.setNumeroInterior(resultSet.getString("NumeroInterior"));
-
-                        direccion.Colonia = new Colonia();
-                        direccion.Colonia.setIdColonia(resultSet.getInt("idColonia"));
-                        direccion.Colonia.setNombre(resultSet.getString("NombreColonia"));
-
-                        Usuario usuario = ((Usuario) result.Objects.get(result.Objects.size() - 1));
-                        usuario.Direcciones.add(direccion);
-
-                    } else {
-
-                        Usuario usuario = new Usuario();
-                        usuario.setIdUsuario(idUsuarioIngresar);
-                        usuario.setNombre(resultSet.getString("NombreUsuario"));
-
-                        usuario.setApellidoPaterno(resultSet.getString("apellidopaterno"));
-                        usuario.setApellidoMaterno(resultSet.getString("apellidomaterno"));
-                        usuario.setTelefono(resultSet.getString("telefono"));
-                        usuario.setFechanacimiento(resultSet.getDate("fechanacimiento"));
-                        usuario.setEmail(resultSet.getString("email"));
-                        usuario.setSexo(resultSet.getString("sexo"));
-                        usuario.setCelular(resultSet.getString("celular"));
-                        usuario.setCurp(resultSet.getString("curp"));
-                        usuario.setPassword(resultSet.getString("password"));
-                        usuario.setUsername(resultSet.getString("username"));
-                        int IdDireccion = resultSet.getInt("idDireccion");
-
-                        if (IdDireccion != 0) {
-
-                            usuario.Direcciones = new ArrayList<>();
-
+                        do {
                             Direccion direccion = new Direccion();
                             direccion.setIdDireccion(resultSet.getInt("idDireccion"));
                             direccion.setCalle(resultSet.getString("calle"));
@@ -210,41 +188,13 @@ public class UsuarioDAOImplementation implements IUsuario {
                             direccion.Colonia.setNombre(resultSet.getString("NombreColonia"));
 
                             usuario.Direcciones.add(direccion);
-                        }
-
-                        result.Objects.add(usuario);
+                        } while (resultSet.next());
 
                     }
+
+                    result.Correct = true;
+                    result.object = usuario;
                 }
-//                if (resultSet.next()) {
-//                    Usuario usuario = new Usuario();
-//                    usuario.setNombre(resultSet.getString("NombreUsuario"));
-//
-//                    int idDireccion = resultSet.getInt("IdDireccion"); // null -> 0
-//
-//                    if (idDireccion != 0) {
-//
-//                        usuario.Direcciones = new ArrayList<>();
-//
-//                        do {
-//                            Direccion direccion = new Direccion();
-//                            direccion.setIdDireccion(resultSet.getInt("idDireccion"));
-//                            direccion.setCalle(resultSet.getString("calle"));
-//                            direccion.setNumeroExterior(resultSet.getString("NumeroExterior"));
-//                            direccion.setNumeroInterior(resultSet.getString("NumeroInterior"));
-//
-//                            direccion.Colonia = new Colonia();
-//                            direccion.Colonia.setIdColonia(resultSet.getInt("idColonia"));
-//                            direccion.Colonia.setNombre(resultSet.getString("NombreColonia"));
-//
-//                            usuario.Direcciones.add(direccion);
-//                        } while (resultSet.next());
-//
-//                    }
-//
-//                    result.Correct = true;
-//                    result.object = usuario;
-//                }
 
                 return true;
             });

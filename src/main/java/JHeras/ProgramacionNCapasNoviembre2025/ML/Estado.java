@@ -5,7 +5,9 @@ import java.util.List;
 public class Estado {
     private int idEstado;
     private String nombre;
-    public List<Pais> Paises;
+//    public List<Pais> Paises;
+    
+    public Pais Pais;
     
     
     public Estado(){
@@ -32,12 +34,20 @@ public class Estado {
      this.nombre=nombre;
  }
 
-    public List<Pais> getPaises() {
-        return Paises;
+//    public List<Pais> getPaises() {
+//        return Paises;
+//    }
+//
+//    public void setPaises(List<Pais> Paises) {
+//        this.Paises = Paises;
+//    }
+
+    public Pais getPais() {
+        return Pais;
     }
 
-    public void setPaises(List<Pais> Paises) {
-        this.Paises = Paises;
+    public void setPais(Pais Pais) {
+        this.Pais = Pais;
     }
- 
+   
 }
