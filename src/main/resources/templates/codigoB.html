@@ -1255,3 +1255,91 @@ $("#ddlestado").off('change');
                     
 
                     $('#ddlcolonia').val(idColonia).trigger('change');
+------------
+
+    $(document).ready(function () {
+
+            console.log("iniciando");
+            $("#ddlpais").change(function () {
+                if ($("#ddlpais").val() == 0) {
+                    $("#ddlestado").empty();
+                    $("#ddlestado").append("<option value=0 selected>Selecciona un estado</option>");
+                } else {
+                    console.log("Primer Else")
+                    $.ajax({
+                        url: "/usuario/getEstadosByPais/" + $("#ddlpais").val(),
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function (data, textStatus, jqXHR) {
+                            if (data.Correct) {
+                                $("#ddlestado").empty();
+                                $("#ddlestado").append("<option value=0 selected>Selecciona un estado</option>");
+                                $.each(data.Objects, function (i, estado) {
+                                    $("#ddlestado").append("<option value=" + estado.idEstado + ">" + estado.nombre + "</option>");
+                                })
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            alert("Algo salio mal");
+                        }
+
+                    })
+                }
+            }
+            );
+            $("#ddlestado").change(function () {
+                if ($("#ddlestado").val() == 0) {
+                    $("#ddlmunicipio").empty();
+                    $("#ddlmunicipio").append("<option value=0 selected>Selecciona un municipio</option>");
+                } else {
+                    console.log("municipio")
+                    $.ajax({
+                        url: "/usuario/getMunicipioByEstado/" + $("#ddlestado").val(),
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function (data, textStatus, jqXHR) {
+                            if (data.Correct) {
+                                $("#ddlmunicipio").empty();
+                                $("#ddlmunicipio").append("<option value=0 selected>Selecciona un municipio</option>");
+                                $.each(data.Objects, function (i, municipio) {
+                                    $("#ddlmunicipio").append("<option value=" + municipio.idMunicipio + ">" + municipio.nombre + "</option>");
+                                })
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            alert("Algo salio mal")
+                        }
+
+                    })
+                }
+
+            });
+            $("#ddlmunicipio").change(function () {
+                if ($("#ddlmunicipio").val() == 0) {
+                    $("#ddlcolonia").empty();
+                    $("#ddlcolonia").append("<option value=0 selected>Selecciona una colonia</option>");
+                } else {
+                    console.log("colonia")
+                    $.ajax({
+                        url: "/usuario/getColoniaByMunicipio/" + $("#ddlmunicipio").val(),
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function (data, textStatus, jqXHR) {
+                            if (data.Correct) {
+                                $("#ddlcolonia").empty();
+                                $("#ddlcolonia").append("<option value=0 selected>Selecciona una colonia</option>");
+                                $.each(data.Objects, function (i, colonia) {
+                                    //                                        $("#ddlcolonia").append("<option value=" + colonia.idColonia + ">" + colonia.nombre + "</option>");
+                                    $("#ddlcolonia").append('<option value="' + colonia.idColonia + '">' + colonia.nombre + '</option>');
+                                })
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            alert("Algo salio mal")
+                        }
+
+                    })
+                }
+
+            });
+        });

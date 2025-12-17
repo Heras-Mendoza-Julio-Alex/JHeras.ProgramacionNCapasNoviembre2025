@@ -15,7 +15,7 @@
         <!-- SweetAlert -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <!--        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>-->
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     </head>
@@ -179,6 +179,11 @@
                     </table>
 
                     <div class="mt-2">
+                        <!--                        <a class="btn btn-warning btn-sm me-2"
+                                                                   data-bs-toggle="modal"
+                                                                   data-bs-target="#modalDireccion" th:onclick="|modalDireccionEdit(${direccion.idDireccion})|">
+                                                                    <i class="bi bi-pencil-square"></i> agregar
+                                                                </a>-->
                         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#agregarDireccion">
                             Agregar Dirección
                         </button>
@@ -199,7 +204,7 @@
 
                         <form method="post" th:object="${usuario}" th:action="@{/usuario/add}">
                             <input type="hidden" class="form-control" th:field="${usuario.idUsuario}">
-                            <input type="hidden" th:field="*{idUsuario}">
+                            <input type="hidden" th:field="*{idUsuario}" id="idusuario">
 
                             <div class="modal-body">
 
@@ -316,6 +321,7 @@
                 <div class="modal-dialog modal-lg modal-dialog-scrollable">
                     <div class="modal-content">
 
+
                         <!-- Header -->
                         <div class="modal-header">
                             <h5 class="modal-title" id="modalDireccionLabel">
@@ -324,23 +330,29 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
 
+
                         <!-- Body -->
                         <div class="modal-body">
                             <div class="row g-3">
 
                                 <div class="row g-3">
                                     <div class="col-md-6">
+
+
                                         <label class="form-label fw-semibold">Calle</label>
                                         <div class="input-group input-group-sm">
                                             <span class="input-group-text"><i class="bi bi-signpost-split"></i></span>
-                                            <input type="text" class="form-control" id="Calle" placeholder="Calle">
+                                            <input type="text"  class="form-control" id="Calle" placeholder="Calle">
+                                            <input type="hidden" id="iddireccion">
+
+
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <label class="form-label fw-semibold">Número Ext</label>
                                         <div class="input-group input-group-sm">
                                             <span class="input-group-text"><i class="bi bi-hash"></i></span>
-                                            <input type="text" class="form-control" id="NumeroExterior" placeholder="Exterior" >
+                                            <input type="text"   class="form-control" id="NumeroExterior" placeholder="Exterior" >
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -402,8 +414,9 @@
                                     data-bs-dismiss="modal">
                                 Cerrar
                             </button>
-                            <button type="button" class="btn btn-success">
-                                Guardar dirección
+                            <!--                                onclick="enviarDireccion()"-->
+                            <button type="button" class="btn btn-success" onclick="enviarDireccion()">Guardar dirección
+
                             </button>
                         </div>
 
@@ -422,7 +435,7 @@
 
         function modalDireccionEdit(IdDireccion) {
             console.log("IdDireccion recibido:", IdDireccion);
-
+            $('#iddireccion').val(IdDireccion);
             $.ajax({
                 url: '/usuario/GetByIdDireccion/' + IdDireccion,
                 type: 'GET',
@@ -434,6 +447,8 @@
                     $('#NumeroExterior').val(result.object.numeroExterior);
                     $('#NumeroInterior').val(result.object.numeroInterior);
 
+
+
                     const idPais = result.object.Colonia.municipio.Estado.Pais.idPais;
                     const idEstado = result.object.Colonia.municipio.Estado.idEstado;
                     const idMunicipio = result.object.Colonia.municipio.idMunicipio;
@@ -441,7 +456,7 @@
 
                     $('#ddlpais').val(idPais).trigger('change');
 
-                    // ==================== ESTADO ====================
+
                     $("#ddlpais").off("change").on("change", function () {
                         $.ajax({
                             url: "/usuario/getEstadosByPais/" + $(this).val(),
@@ -464,7 +479,7 @@
                         });
                     });
 
-// ==================== MUNICIPIO ====================
+
                     $("#ddlestado").off("change").on("change", function () {
                         $.ajax({
                             url: "/usuario/getMunicipioByEstado/" + $(this).val(),
@@ -487,7 +502,7 @@
                         });
                     });
 
-// ==================== COLONIA ====================
+
                     $("#ddlmunicipio").off("change").on("change", function () {
                         $.ajax({
                             url: "/usuario/getColoniaByMunicipio/" + $(this).val(),
@@ -519,92 +534,57 @@
             });
         }
 
-        $(document).ready(function () {
 
-            console.log("iniciando");
-            $("#ddlpais").change(function () {
-                if ($("#ddlpais").val() == 0) {
-                    $("#ddlestado").empty();
-                    $("#ddlestado").append("<option value=0 selected>Selecciona un estado</option>");
-                } else {
-                    console.log("Primer Else")
-                    $.ajax({
-                        url: "/usuario/getEstadosByPais/" + $("#ddlpais").val(),
-                        method: 'GET',
-                        dataType: 'json',
-                        success: function (data, textStatus, jqXHR) {
-                            if (data.Correct) {
-                                $("#ddlestado").empty();
-                                $("#ddlestado").append("<option value=0 selected>Selecciona un estado</option>");
-                                $.each(data.Objects, function (i, estado) {
-                                    $("#ddlestado").append("<option value=" + estado.idEstado + ">" + estado.nombre + "</option>");
-                                })
+        function enviarDireccion() {
+
+            const direccion = {
+                idDireccion: $('#iddireccion').val(),
+                calle: $('#Calle').val(),
+                numeroExterior: $('#NumeroExterior').val(),
+                numeroInterior: $('#NumeroInterior').val(),
+                pais: $('#ddlpais').val(),
+                estado: $('#ddlestado').val(),
+                idmunicipio: $('#ddlmunicipio').val(),
+                colonia: {
+                    idColonia: $('#ddlcolonia').val(),
+                    municipio: {
+                        idMunicipio: $('#ddlmunicipio').val(),
+                        estado: {
+                            idEstado: $('#ddlestado').val(),
+                            pais: {
+                                idPais: $('#ddlpais').val()
                             }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            alert("Algo salio mal");
                         }
-
-                    })
-                }
-            }
-            );
-            $("#ddlestado").change(function () {
-                if ($("#ddlestado").val() == 0) {
-                    $("#ddlmunicipio").empty();
-                    $("#ddlmunicipio").append("<option value=0 selected>Selecciona un municipio</option>");
-                } else {
-                    console.log("municipio")
-                    $.ajax({
-                        url: "/usuario/getMunicipioByEstado/" + $("#ddlestado").val(),
-                        method: 'GET',
-                        dataType: 'json',
-                        success: function (data, textStatus, jqXHR) {
-                            if (data.Correct) {
-                                $("#ddlmunicipio").empty();
-                                $("#ddlmunicipio").append("<option value=0 selected>Selecciona un municipio</option>");
-                                $.each(data.Objects, function (i, municipio) {
-                                    $("#ddlmunicipio").append("<option value=" + municipio.idMunicipio + ">" + municipio.nombre + "</option>");
-                                })
-                            }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            alert("Algo salio mal")
-                        }
-
-                    })
+                    }
+                },
+                usuario: {
+                    idUsuario: $('#idusuario').val()
                 }
 
+            };
+            console.log($('#iddireccion').val());
+            var idUsuario = $('#idusuario').val();
+            console.log(idUsuario);
+
+            console.log("Objeto dirección:", direccion);
+
+            $.ajax({
+                url: '/usuario/addDireccion/' + idUsuario,
+                method: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(direccion),
+                success: function (response) {
+                    console.log("Dirección guardada:", response);
+                },
+                error: function (xhr) {
+                    console.error("Error:", xhr.responseText);
+                }
             });
-            $("#ddlmunicipio").change(function () {
-                if ($("#ddlmunicipio").val() == 0) {
-                    $("#ddlcolonia").empty();
-                    $("#ddlcolonia").append("<option value=0 selected>Selecciona una colonia</option>");
-                } else {
-                    console.log("colonia")
-                    $.ajax({
-                        url: "/usuario/getColoniaByMunicipio/" + $("#ddlmunicipio").val(),
-                        method: 'GET',
-                        dataType: 'json',
-                        success: function (data, textStatus, jqXHR) {
-                            if (data.Correct) {
-                                $("#ddlcolonia").empty();
-                                $("#ddlcolonia").append("<option value=0 selected>Selecciona una colonia</option>");
-                                $.each(data.Objects, function (i, colonia) {
-                                    //                                        $("#ddlcolonia").append("<option value=" + colonia.idColonia + ">" + colonia.nombre + "</option>");
-                                    $("#ddlcolonia").append('<option value="' + colonia.idColonia + '">' + colonia.nombre + '</option>');
-                                })
-                            }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            alert("Algo salio mal")
-                        }
+        }
 
-                    })
-                }
 
-            });
-        });
+
     </script>
     <script>
 

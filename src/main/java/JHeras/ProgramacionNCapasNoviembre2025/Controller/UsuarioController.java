@@ -57,6 +57,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -92,7 +93,7 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioJPADAOImplementation usuarioJPADAOImplementation;
-    
+
     @Autowired
     private DireccionJPADAOImplementation direccionJPADAOImplementation;
 
@@ -151,27 +152,47 @@ public class UsuarioController {
 
         return "redirect:/usuario";
     }
-    
-    
+
     @GetMapping("/GetByIdDireccion/{IdDireccion}")
     @ResponseBody
-    public Result GetByIdDireccion(@PathVariable int IdDireccion){
-        
+    public Result GetByIdDireccion(@PathVariable int IdDireccion) {
+
         Result result = direccionJPADAOImplementation.getById(IdDireccion);
-        
+
         return result;
     }
 
-    
-    
-    
+    @PostMapping("addDireccion/{IdUsuario}")
+    public String addDireccion(@RequestBody Direccion direccion, @PathVariable("IdUsuario") int IdUsuario,
+             Model model) {
+
+        ModelMapper modelMapper = new ModelMapper();
+        JHeras.ProgramacionNCapasNoviembre2025.JPA.Direccion direccionJPA
+                = modelMapper.map(direccion, JHeras.ProgramacionNCapasNoviembre2025.JPA.Direccion.class);
+
+        Result result;
+        if (direccionJPA.getIdDireccion() == 0) {
+            // Si el id es 0, agregamos un nuevo usuario
+            //result = direccionJPADAOImplementation.addDireccion(IdUsuario,direccionJPA);
+            result = direccionJPADAOImplementation.add(direccion,IdUsuario);
+        } else {
+            // Si el id ya existe, hacemos update
+            result = direccionJPADAOImplementation.edit(direccion,IdUsuario);
+        }
+
+        // Aquí puedes manejar el resultado si quieres mostrar mensajes
+        model.addAttribute("result", result);
+
+        return "redirect:/usuario/detail/"+IdUsuario;
+    }
+
     @GetMapping("detail/{IdUsuario}")
     public String Detail(@PathVariable("IdUsuario") int IdUsuario, Model model) {
 
         Result result = usuarioDAOImplementation.getById(IdUsuario);
         Result Presult = paisDAOImplementation.getAll();
         model.addAttribute("Paises", Presult.Objects);
-     
+
         model.addAttribute("usuario", result.object);
 
         return "UsuarioDetail";

@@ -159,6 +159,7 @@ public class UsuarioDAOImplementation implements IUsuario {
 
                 if (resultSet.next()) {
                     Usuario usuario = new Usuario();
+                    usuario.setIdUsuario(resultSet.getInt("idusuario"));
                     usuario.setNombre(resultSet.getString("NombreUsuario"));
                     usuario.setApellidoPaterno(resultSet.getString("apellidopaterno"));
                     usuario.setApellidoMaterno(resultSet.getString("apellidomaterno"));
