@@ -93,5 +93,30 @@ public class UsuarioJPADAOImplementation implements IUsuarioJPA {
         return result;
     }
 
+    @Transactional
+    @Override
+    public Result delete(int IdUsuario) {
+        
+       Result result=new Result();
+       
+        try {
+            Usuario usuario=entityManager.find(Usuario.class, IdUsuario);
+            
+            if (usuario!=null) {
+                entityManager.remove(usuario);
+                
+            }
+            result.Correct=true;
+        } catch (Exception ex) {
+            result.Correct=false;
+            result.ErrorMessage=ex.getLocalizedMessage();
+            result.ex=ex;
+        }
+        
+        return result;
+        
+        
+    }
+
 
 }

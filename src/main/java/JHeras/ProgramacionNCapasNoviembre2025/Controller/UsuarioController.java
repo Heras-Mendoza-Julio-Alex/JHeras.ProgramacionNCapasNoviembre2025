@@ -147,7 +147,7 @@ public class UsuarioController {
             result = usuarioJPADAOImplementation.edit(usuario);
         }
 
-        // Aquí puedes manejar el resultado si quieres mostrar mensajes
+        
         model.addAttribute("result", result);
 
         return "redirect:/usuario";
@@ -172,15 +172,14 @@ public class UsuarioController {
 
         Result result;
         if (direccionJPA.getIdDireccion() == 0) {
-            // Si el id es 0, agregamos un nuevo usuario
-            //result = direccionJPADAOImplementation.addDireccion(IdUsuario,direccionJPA);
-            result = direccionJPADAOImplementation.add(direccion,IdUsuario);
+            
+            result = direccionJPADAOImplementation.add(direccionJPA,IdUsuario);
         } else {
-            // Si el id ya existe, hacemos update
+            
             result = direccionJPADAOImplementation.edit(direccion,IdUsuario);
         }
 
-        // Aquí puedes manejar el resultado si quieres mostrar mensajes
+       
         model.addAttribute("result", result);
 
         return "redirect:/usuario/detail/"+IdUsuario;
@@ -201,8 +200,10 @@ public class UsuarioController {
     @GetMapping("delete/{IdUsuario}")
     public String Delete(@PathVariable("IdUsuario") int IdUsuario, RedirectAttributes redirectAttributes) {
         //Result resultDelete = usuarioDAOImplementation.DeleteById(IdUsuario);
-        Result resultDelete = new Result();
-        resultDelete.Correct = true;
+        Result resultDelete=usuarioJPADAOImplementation.delete(IdUsuario);
+        
+//        Result resultDelete = new Result();
+//        resultDelete.Correct = true;
 
         if (resultDelete.Correct) {
             resultDelete.object = "El usuario " + IdUsuario + " se elimino de forma correcta";
@@ -215,7 +216,7 @@ public class UsuarioController {
     }
 
 //    @GetMapping("deleteDireccion/{IdDireccion}")
-//    public String DeleteDireccion(@PathVariable("IdDireccion") int IdDireccion, @PathVariable("IdUsuario") int IdUsuario, RedirectAttributes redirectAttributes) {
+//    public String DeleteDireccion(@RequestParam("idUsuario") int idUsuario, @RequestParam("idDireccion") IdDireccion,RedirectAttributes redirectAttributes) {
 //        //Result resultDelete = usuarioDAOImplementation.DeleteById(IdUsuario);
 //        Result resultDelete = new Result();
 //        resultDelete.Correct = true;
@@ -229,6 +230,8 @@ public class UsuarioController {
 //        redirectAttributes.addFlashAttribute("resultDelete", resultDelete);
 //        return "redirect:/usuario/detail/"+IdUsuario;
 //    }
+    
+    
     @GetMapping("getEstadosByPais/{idPais}")
     @ResponseBody
     public Result EstadosByPais(@PathVariable("idPais") int idPais) {

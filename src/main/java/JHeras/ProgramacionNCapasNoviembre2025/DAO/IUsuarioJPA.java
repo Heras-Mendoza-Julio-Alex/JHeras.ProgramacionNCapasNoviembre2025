@@ -12,5 +12,6 @@ public interface IUsuarioJPA {
     
     public Result edit(JHeras.ProgramacionNCapasNoviembre2025.ML.Usuario usuarioML);
     
+    public Result delete(int IdUsuario);
 
 }

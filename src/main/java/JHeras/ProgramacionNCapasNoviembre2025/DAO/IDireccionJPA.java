@@ -7,7 +7,7 @@ public interface IDireccionJPA {
 
     public Result getById(int IdDireccion);        
     
-    public Result add(JHeras.ProgramacionNCapasNoviembre2025.ML.Direccion direccionML,int IdUsuario);
+    public Result add(Direccion direccionjpa,int IdUsuario);
     
     public Result edit(JHeras.ProgramacionNCapasNoviembre2025.ML.Direccion direccionML,int IdUsuario);
     
