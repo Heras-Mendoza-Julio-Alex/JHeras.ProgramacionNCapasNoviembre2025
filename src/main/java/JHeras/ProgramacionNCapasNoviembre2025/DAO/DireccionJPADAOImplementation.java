@@ -86,4 +86,27 @@ public class DireccionJPADAOImplementation implements IDireccionJPA {
         return result;
     }
 
+    @Transactional
+    @Override
+    public Result delete(int idDireccion) {
+         Result result=new Result();
+       
+        try {
+            Direccion direccion=entityManager.find(Direccion.class, idDireccion);
+            
+            if (direccion!=null) {
+                entityManager.remove(direccion);
+                
+            }
+            result.Correct=true;
+        } catch (Exception ex) {
+            result.Correct=false;
+            result.ErrorMessage=ex.getLocalizedMessage();
+            result.ex=ex;
+        }
+        
+        return result;
+        
+    }
+
 }

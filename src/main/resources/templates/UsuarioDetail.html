@@ -168,7 +168,9 @@
 
 
 
-                                        <a class="btn btn-danger btn-sm">Borrar</a>
+                                        <button th:onclick="|EliminarDireccion(${usuario.IdUsuario},${direccion.idDireccion})|" class="btn btn-danger">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -436,171 +438,202 @@
 
     </body>
 
+    <script th:if="${resultDelete}" th:inline="javascript">
+        console.log("Despues de eliminar");
+        if ([[${resultDelete.Correct}]]){
+        Swal.fire({
+        title: "Borrar",
+                text: [[${resultDelete.object}]],
+                icon: "success",
+        });
+        } else{
+        Swal.fire({
+        title: "Fallido",
+                text: "Ha ocurrido un error",
+                icon: "error",
+        });
+        }
+
+
+
+    </script>
+
+
+
+
     <script>
 
+        function EliminarDireccion(idUsuario, idDireccion) {
+
+        Swal.fire({
+        title: "¿Estas seguro de eliminar la direccion?",
+                text: "La direccion se va a eliminar",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si, borrar"
+        }).then((result) => {
+        if (result.isConfirmed) {
+        window.location.href = "/usuario/deleteDireccion/" + idUsuario + "/" + idDireccion;
+        }
+        });
+        }
+
+
+
         function modalDireccionEdit(IdDireccion) {
-            console.log("IdDireccion recibido:", IdDireccion);
-            $('#iddireccion').val(IdDireccion);
-
-            if (IdDireccion === 0) {
-                // CREAR NUEVA DIRECCIÓN
-                $('#Calle').val('');
-                $('#NumeroExterior').val('');
-                $('#NumeroInterior').val('');
-
-                // Reset dropdowns
-                $('#ddlpais').val(0).trigger('change');
-                $('#ddlestado').empty().append("<option value='0'>Selecciona un estado</option>");
-                $('#ddlmunicipio').empty().append("<option value='0'>Selecciona un municipio</option>");
-                $('#ddlcolonia').empty().append("<option value='0'>Selecciona una colonia</option>");
-
-                // Habilitar el evento para cuando el usuario seleccione un país
+        console.log("IdDireccion recibido:", IdDireccion);
+        $('#iddireccion').val(IdDireccion);
+        if (IdDireccion === 0) {
+        // CREAR NUEVA DIRECCIÓN
+        $('#Calle').val('');
+        $('#NumeroExterior').val('');
+        $('#NumeroInterior').val('');
+        // Reset dropdowns
+        $('#ddlpais').val(0).trigger('change');
+        $('#ddlestado').empty().append("<option value='0'>Selecciona un estado</option>");
+        $('#ddlmunicipio').empty().append("<option value='0'>Selecciona un municipio</option>");
+        $('#ddlcolonia').empty().append("<option value='0'>Selecciona una colonia</option>");
+        // Habilitar el evento para cuando el usuario seleccione un país
+        $("#ddlpais").off("change").on("change", function () {
+        const paisId = $(this).val();
+        if (paisId != 0) {
+        $.ajax({
+        url: "/usuario/getEstadosByPais/" + paisId,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                $("#ddlestado")
+                        .empty()
+                        .append("<option value='0'>Selecciona un estado</option>");
+                $.each(data.Objects, function (i, estado) {
+                $("#ddlestado").append(`<option value="${estado.idEstado}">${estado.nombre}</option>`);
+                });
+                $("#ddlmunicipio").empty().append("<option value='0'>Selecciona un municipio</option>");
+                $("#ddlcolonia").empty().append("<option value='0'>Selecciona una colonia</option>");
+                }
+        });
+        } else {
+        $("#ddlestado").empty().append("<option value='0'>Selecciona un estado</option>");
+        $("#ddlmunicipio").empty().append("<option value='0'>Selecciona un municipio</option>");
+        $("#ddlcolonia").empty().append("<option value='0'>Selecciona una colonia</option>");
+        }
+        });
+        $("#ddlestado").off("change").on("change", function () {
+        const estadoId = $(this).val();
+        if (estadoId != 0) {
+        $.ajax({
+        url: "/usuario/getMunicipioByEstado/" + estadoId,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                $("#ddlmunicipio")
+                        .empty()
+                        .append("<option value='0'>Selecciona un municipio</option>");
+                $.each(data.Objects, function (i, municipio) {
+                $("#ddlmunicipio").append(`<option value="${municipio.idMunicipio}">${municipio.nombre}</option>`);
+                });
+                $("#ddlcolonia").empty().append("<option value='0'>Selecciona una colonia</option>");
+                }
+        });
+        } else {
+        $("#ddlmunicipio").empty().append("<option value='0'>Selecciona un municipio</option>");
+        $("#ddlcolonia").empty().append("<option value='0'>Selecciona una colonia</option>");
+        }
+        });
+        $("#ddlmunicipio").off("change").on("change", function () {
+        const municipioId = $(this).val();
+        if (municipioId != 0) {
+        $.ajax({
+        url: "/usuario/getColoniaByMunicipio/" + municipioId,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                $("#ddlcolonia")
+                        .empty()
+                        .append("<option value='0'>Selecciona una colonia</option>");
+                $.each(data.Objects, function (i, colonia) {
+                $("#ddlcolonia").append(`<option value="${colonia.idColonia}">${colonia.nombre}</option>`);
+                });
+                }
+        });
+        } else {
+        $("#ddlcolonia").empty().append("<option value='0'>Selecciona una colonia</option>");
+        }
+        });
+        } else {
+        // EDITAR DIRECCIÓN (tu código existente)
+        $.ajax({
+        url: '/usuario/GetByIdDireccion/' + IdDireccion,
+                type: 'GET',
+                dataType: 'json',
+                success: function (result) {
+                console.log("RESULTADO COMPLETO:", result);
+                $('#Calle').val(result.object.calle);
+                $('#NumeroExterior').val(result.object.numeroExterior);
+                $('#NumeroInterior').val(result.object.numeroInterior);
+                const idPais = result.object.Colonia.municipio.Estado.Pais.idPais;
+                const idEstado = result.object.Colonia.municipio.Estado.idEstado;
+                const idMunicipio = result.object.Colonia.municipio.idMunicipio;
+                const idColonia = result.object.Colonia.idColonia;
+                $('#ddlpais').val(idPais).trigger('change');
+                // Eventos para cargar estados, municipios y colonias (igual que tu código original)
                 $("#ddlpais").off("change").on("change", function () {
-                    const paisId = $(this).val();
-                    if (paisId != 0) {
-                        $.ajax({
-                            url: "/usuario/getEstadosByPais/" + paisId,
-                            type: "GET",
-                            dataType: "json",
-                            success: function (data) {
-                                $("#ddlestado")
-                                        .empty()
-                                        .append("<option value='0'>Selecciona un estado</option>");
-                                $.each(data.Objects, function (i, estado) {
-                                    $("#ddlestado").append(`<option value="${estado.idEstado}">${estado.nombre}</option>`);
-                                });
-                                $("#ddlmunicipio").empty().append("<option value='0'>Selecciona un municipio</option>");
-                                $("#ddlcolonia").empty().append("<option value='0'>Selecciona una colonia</option>");
-                            }
-                        });
-                    } else {
-                        $("#ddlestado").empty().append("<option value='0'>Selecciona un estado</option>");
-                        $("#ddlmunicipio").empty().append("<option value='0'>Selecciona un municipio</option>");
-                        $("#ddlcolonia").empty().append("<option value='0'>Selecciona una colonia</option>");
-                    }
-                });
-
-                $("#ddlestado").off("change").on("change", function () {
-                    const estadoId = $(this).val();
-                    if (estadoId != 0) {
-                        $.ajax({
-                            url: "/usuario/getMunicipioByEstado/" + estadoId,
-                            type: "GET",
-                            dataType: "json",
-                            success: function (data) {
-                                $("#ddlmunicipio")
-                                        .empty()
-                                        .append("<option value='0'>Selecciona un municipio</option>");
-                                $.each(data.Objects, function (i, municipio) {
-                                    $("#ddlmunicipio").append(`<option value="${municipio.idMunicipio}">${municipio.nombre}</option>`);
-                                });
-                                $("#ddlcolonia").empty().append("<option value='0'>Selecciona una colonia</option>");
-                            }
-                        });
-                    } else {
-                        $("#ddlmunicipio").empty().append("<option value='0'>Selecciona un municipio</option>");
-                        $("#ddlcolonia").empty().append("<option value='0'>Selecciona una colonia</option>");
-                    }
-                });
-
-                $("#ddlmunicipio").off("change").on("change", function () {
-                    const municipioId = $(this).val();
-                    if (municipioId != 0) {
-                        $.ajax({
-                            url: "/usuario/getColoniaByMunicipio/" + municipioId,
-                            type: "GET",
-                            dataType: "json",
-                            success: function (data) {
-                                $("#ddlcolonia")
-                                        .empty()
-                                        .append("<option value='0'>Selecciona una colonia</option>");
-                                $.each(data.Objects, function (i, colonia) {
-                                    $("#ddlcolonia").append(`<option value="${colonia.idColonia}">${colonia.nombre}</option>`);
-                                });
-                            }
-                        });
-                    } else {
-                        $("#ddlcolonia").empty().append("<option value='0'>Selecciona una colonia</option>");
-                    }
-                });
-
-            } else {
-                // EDITAR DIRECCIÓN (tu código existente)
                 $.ajax({
-                    url: '/usuario/GetByIdDireccion/' + IdDireccion,
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function (result) {
-                        console.log("RESULTADO COMPLETO:", result);
-                        $('#Calle').val(result.object.calle);
-                        $('#NumeroExterior').val(result.object.numeroExterior);
-                        $('#NumeroInterior').val(result.object.numeroInterior);
-
-                        const idPais = result.object.Colonia.municipio.Estado.Pais.idPais;
-                        const idEstado = result.object.Colonia.municipio.Estado.idEstado;
-                        const idMunicipio = result.object.Colonia.municipio.idMunicipio;
-                        const idColonia = result.object.Colonia.idColonia;
-
-                        $('#ddlpais').val(idPais).trigger('change');
-
-                        // Eventos para cargar estados, municipios y colonias (igual que tu código original)
-                        $("#ddlpais").off("change").on("change", function () {
-                            $.ajax({
-                                url: "/usuario/getEstadosByPais/" + $(this).val(),
-                                type: "GET",
-                                dataType: "json",
-                                success: function (data) {
-                                    $("#ddlestado").empty().append("<option value='0'>Selecciona un estado</option>");
-                                    $.each(data.Objects, function (i, estado) {
-                                        $("#ddlestado").append(`<option value="${estado.idEstado}">${estado.nombre}</option>`);
-                                    });
-                                    $("#ddlestado").val(idEstado).trigger("change");
-                                }
-                            });
+                url: "/usuario/getEstadosByPais/" + $(this).val(),
+                        type: "GET",
+                        dataType: "json",
+                        success: function (data) {
+                        $("#ddlestado").empty().append("<option value='0'>Selecciona un estado</option>");
+                        $.each(data.Objects, function (i, estado) {
+                        $("#ddlestado").append(`<option value="${estado.idEstado}">${estado.nombre}</option>`);
                         });
-
-                        $("#ddlestado").off("change").on("change", function () {
-                            $.ajax({
-                                url: "/usuario/getMunicipioByEstado/" + $(this).val(),
-                                type: "GET",
-                                dataType: "json",
-                                success: function (data) {
-                                    $("#ddlmunicipio").empty().append("<option value='0'>Selecciona un municipio</option>");
-                                    $.each(data.Objects, function (i, municipio) {
-                                        $("#ddlmunicipio").append(`<option value="${municipio.idMunicipio}">${municipio.nombre}</option>`);
-                                    });
-                                    $("#ddlmunicipio").val(idMunicipio).trigger("change");
-                                }
-                            });
-                        });
-
-                        $("#ddlmunicipio").off("change").on("change", function () {
-                            $.ajax({
-                                url: "/usuario/getColoniaByMunicipio/" + $(this).val(),
-                                type: "GET",
-                                dataType: "json",
-                                success: function (data) {
-                                    $("#ddlcolonia").empty().append("<option value='0'>Selecciona una colonia</option>");
-                                    $.each(data.Objects, function (i, colonia) {
-                                        $("#ddlcolonia").append(`<option value="${colonia.idColonia}">${colonia.nombre}</option>`);
-                                    });
-                                    $("#ddlcolonia").val(idColonia);
-                                }
-                            });
-                        });
-                    }
+                        $("#ddlestado").val(idEstado).trigger("change");
+                        }
                 });
-            }
+                });
+                $("#ddlestado").off("change").on("change", function () {
+                $.ajax({
+                url: "/usuario/getMunicipioByEstado/" + $(this).val(),
+                        type: "GET",
+                        dataType: "json",
+                        success: function (data) {
+                        $("#ddlmunicipio").empty().append("<option value='0'>Selecciona un municipio</option>");
+                        $.each(data.Objects, function (i, municipio) {
+                        $("#ddlmunicipio").append(`<option value="${municipio.idMunicipio}">${municipio.nombre}</option>`);
+                        });
+                        $("#ddlmunicipio").val(idMunicipio).trigger("change");
+                        }
+                });
+                });
+                $("#ddlmunicipio").off("change").on("change", function () {
+                $.ajax({
+                url: "/usuario/getColoniaByMunicipio/" + $(this).val(),
+                        type: "GET",
+                        dataType: "json",
+                        success: function (data) {
+                        $("#ddlcolonia").empty().append("<option value='0'>Selecciona una colonia</option>");
+                        $.each(data.Objects, function (i, colonia) {
+                        $("#ddlcolonia").append(`<option value="${colonia.idColonia}">${colonia.nombre}</option>`);
+                        });
+                        $("#ddlcolonia").val(idColonia);
+                        }
+                });
+                });
+                }
+        });
+        }
 
-            // Abrir modal
-            $('#modalDireccion').modal('show');
+        // Abrir modal
+        $('#modalDireccion').modal('show');
         }
 
 
         function enviarDireccion() {
 
-            const direccion = {
-                idDireccion: $('#iddireccion').val(),
+        const direccion = {
+        idDireccion: $('#iddireccion').val(),
                 calle: $('#Calle').val(),
                 numeroExterior: $('#NumeroExterior').val(),
                 numeroInterior: $('#NumeroInterior').val(),
@@ -608,41 +641,39 @@
                 estado: $('#ddlestado').val(),
                 idmunicipio: $('#ddlmunicipio').val(),
                 colonia: {
-                    idColonia: $('#ddlcolonia').val(),
-                    municipio: {
+                idColonia: $('#ddlcolonia').val(),
+                        municipio: {
                         idMunicipio: $('#ddlmunicipio').val(),
-                        estado: {
-                            idEstado: $('#ddlestado').val(),
-                            pais: {
-                                idPais: $('#ddlpais').val()
-                            }
+                                estado: {
+                                idEstado: $('#ddlestado').val(),
+                                        pais: {
+                                        idPais: $('#ddlpais').val()
+                                        }
+                                }
                         }
-                    }
                 },
                 usuario: {
-                    idUsuario: $('#idusuario').val()
+                idUsuario: $('#idusuario').val()
                 }
 
-            };
-            console.log($('#iddireccion').val());
-            var idUsuario = $('#idusuario').val();
-            console.log(idUsuario);
-
-            console.log("Objeto dirección:", direccion);
-
-            $.ajax({
-                url: '/usuario/addDireccion/' + idUsuario,
+        };
+        console.log($('#iddireccion').val());
+        var idUsuario = $('#idusuario').val();
+        console.log(idUsuario);
+        console.log("Objeto dirección:", direccion);
+        $.ajax({
+        url: '/usuario/addDireccion/' + idUsuario,
                 method: 'POST',
                 contentType: 'application/json',
                 dataType: 'json',
                 data: JSON.stringify(direccion),
                 success: function (response) {
-                    console.log("Dirección guardada:", response);
+                console.log("Dirección guardada:", response);
                 },
                 error: function (xhr) {
-                    console.error("Error:", xhr.responseText);
+                console.error("Error:", xhr.responseText);
                 }
-            });
+        });
         }
 
 
@@ -651,94 +682,94 @@
     <script>
 
         function numeroCT(event, input) {
-            let key = event.key;
-            let RegExp = /^\d{10}$/;
-            if (RegExp.test(input.value)) {
-                $(input).removeClass("error").addClass("correct");
-                $(input).siblings(".error-msg").text("");
-            } else {
-                $(input).removeClass("correct").addClass("error");
-                $(input).siblings(".error-msg").text("Ingresa un número válido");
-            }
+        let key = event.key;
+        let RegExp = /^\d{10}$/;
+        if (RegExp.test(input.value)) {
+        $(input).removeClass("error").addClass("correct");
+        $(input).siblings(".error-msg").text("");
+        } else {
+        $(input).removeClass("correct").addClass("error");
+        $(input).siblings(".error-msg").text("Ingresa un número válido");
+        }
         }
 
         function Curp(event, input) {
-            let value = input.value;
-            let RegExp = /^[A-Z]{4}[0-9]{6}[A-Z]{7}[0-9]{1}$/;
-            if (RegExp.test(value)) {
-                $(input).removeClass("error").addClass("correct");
-                $(input).siblings(".error-msg").text("");
-            } else {
-                $(input).removeClass("correct").addClass("error");
-                $(input).siblings(".error-msg").text("Ingresa una curp valida");
-            }
+        let value = input.value;
+        let RegExp = /^[A-Z]{4}[0-9]{6}[A-Z]{7}[0-9]{1}$/;
+        if (RegExp.test(value)) {
+        $(input).removeClass("error").addClass("correct");
+        $(input).siblings(".error-msg").text("");
+        } else {
+        $(input).removeClass("correct").addClass("error");
+        $(input).siblings(".error-msg").text("Ingresa una curp valida");
+        }
         }
 
         function SoloLetras(event, input) {
-            let key = event.key;
-            let RegExp = /[a-zA-Z]+/;
-            if (RegExp.test(key)) {
-                $(input).removeClass("error").addClass("correct");
-                $(input).siblings(".error-msg").text("");
-            } else {
-                $(input).removeClass("correct").addClass("error");
-                $(input).siblings(".error-msg").text("No se permiten numeros");
-                event.preventDefault();
-            }
+        let key = event.key;
+        let RegExp = /[a-zA-Z]+/;
+        if (RegExp.test(key)) {
+        $(input).removeClass("error").addClass("correct");
+        $(input).siblings(".error-msg").text("");
+        } else {
+        $(input).removeClass("correct").addClass("error");
+        $(input).siblings(".error-msg").text("No se permiten numeros");
+        event.preventDefault();
+        }
         }
 
         function Email(event, input) {
-            let key = event.key;
-            let RegExp = /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/;
-            if (RegExp.test(input.value)) {
-                $(input).removeClass("error").addClass("correct");
-                $(input).siblings(".error-msg").text("");
-            } else {
-                $(input).removeClass("correct").addClass("error");
-                $(input).siblings(".error-msg").text("Ingresa un correo valido");
-                event.preventDefault();
-            }
+        let key = event.key;
+        let RegExp = /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/;
+        if (RegExp.test(input.value)) {
+        $(input).removeClass("error").addClass("correct");
+        $(input).siblings(".error-msg").text("");
+        } else {
+        $(input).removeClass("correct").addClass("error");
+        $(input).siblings(".error-msg").text("Ingresa un correo valido");
+        event.preventDefault();
+        }
         }
 
         function Fecha(event, input) {
 
-            const FechaInput = new Date(input.value);
-            const FechaActual = new Date();
-            if (FechaInput < FechaActual) {
-                $(input).removeClass("error").addClass("correct");
-            } else {
-                $(input).removeClass("correct").addClass("error");
-                $(input).siblings(".error-msg").text("Ingresa una fecha valida");
-                event.preventDefault();
-            }
+        const FechaInput = new Date(input.value);
+        const FechaActual = new Date();
+        if (FechaInput < FechaActual) {
+        $(input).removeClass("error").addClass("correct");
+        } else {
+        $(input).removeClass("correct").addClass("error");
+        $(input).siblings(".error-msg").text("Ingresa una fecha valida");
+        event.preventDefault();
+        }
 
         }
 
         function username(event, input) {
-            let key = event.key();
-            let RegExp = /\w+/;
-            if (RegExp.test(key)) {
-                $(input).removeClass("error").addClass("correct");
-            } else {
-                $(input).removeClass("correct").addClass("error");
-                $(input).siblings(".error-msg").text("Ingresa un usuario valido");
-                event.preventDefault();
-            }
+        let key = event.key();
+        let RegExp = /\w+/;
+        if (RegExp.test(key)) {
+        $(input).removeClass("error").addClass("correct");
+        } else {
+        $(input).removeClass("correct").addClass("error");
+        $(input).siblings(".error-msg").text("Ingresa un usuario valido");
+        event.preventDefault();
+        }
 
         }
 
         function password(event, input) {
 
-            let RegExp = /^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,}$/;
-            if (RegExp.test(input.value)) {
+        let RegExp = /^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,}$/;
+        if (RegExp.test(input.value)) {
 
-                $(input).removeClass("error").addClass("correct");
-                $(input).siblings(".error-msg").text(""); // Limpiar el mensaje de error
-            } else {
+        $(input).removeClass("error").addClass("correct");
+        $(input).siblings(".error-msg").text(""); // Limpiar el mensaje de error
+        } else {
 
-                $(input).removeClass("correct").addClass("error");
-                $(input).siblings(".error-msg").text("Ingresa una contraseña de mínimo 8 dígitos con al menos una mayúscula y número.");
-            }
+        $(input).removeClass("correct").addClass("error");
+        $(input).siblings(".error-msg").text("Ingresa una contraseña de mínimo 8 dígitos con al menos una mayúscula y número.");
+        }
         }
 
     </script>

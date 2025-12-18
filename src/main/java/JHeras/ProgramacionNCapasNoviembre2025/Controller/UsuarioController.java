@@ -147,7 +147,6 @@ public class UsuarioController {
             result = usuarioJPADAOImplementation.edit(usuario);
         }
 
-        
         model.addAttribute("result", result);
 
         return "redirect:/usuario";
@@ -164,7 +163,7 @@ public class UsuarioController {
 
     @PostMapping("addDireccion/{IdUsuario}")
     public String addDireccion(@RequestBody Direccion direccion, @PathVariable("IdUsuario") int IdUsuario,
-             Model model) {
+            Model model) {
 
         ModelMapper modelMapper = new ModelMapper();
         JHeras.ProgramacionNCapasNoviembre2025.JPA.Direccion direccionJPA
@@ -172,17 +171,16 @@ public class UsuarioController {
 
         Result result;
         if (direccionJPA.getIdDireccion() == 0) {
-            
-            result = direccionJPADAOImplementation.add(direccionJPA,IdUsuario);
+
+            result = direccionJPADAOImplementation.add(direccionJPA, IdUsuario);
         } else {
-            
-            result = direccionJPADAOImplementation.edit(direccion,IdUsuario);
+
+            result = direccionJPADAOImplementation.edit(direccion, IdUsuario);
         }
 
-       
         model.addAttribute("result", result);
 
-        return "redirect:/usuario/detail/"+IdUsuario;
+        return "redirect:/usuario/detail/" + IdUsuario;
     }
 
     @GetMapping("detail/{IdUsuario}")
@@ -200,11 +198,10 @@ public class UsuarioController {
     @GetMapping("delete/{IdUsuario}")
     public String Delete(@PathVariable("IdUsuario") int IdUsuario, RedirectAttributes redirectAttributes) {
         //Result resultDelete = usuarioDAOImplementation.DeleteById(IdUsuario);
-        Result resultDelete=usuarioJPADAOImplementation.delete(IdUsuario);
-        
+        Result resultDelete = usuarioJPADAOImplementation.delete(IdUsuario);
+
 //        Result resultDelete = new Result();
 //        resultDelete.Correct = true;
-
         if (resultDelete.Correct) {
             resultDelete.object = "El usuario " + IdUsuario + " se elimino de forma correcta";
         } else {
@@ -215,23 +212,24 @@ public class UsuarioController {
         return "redirect:/usuario";
     }
 
-//    @GetMapping("deleteDireccion/{IdDireccion}")
-//    public String DeleteDireccion(@RequestParam("idUsuario") int idUsuario, @RequestParam("idDireccion") IdDireccion,RedirectAttributes redirectAttributes) {
-//        //Result resultDelete = usuarioDAOImplementation.DeleteById(IdUsuario);
-//        Result resultDelete = new Result();
-//        resultDelete.Correct = true;
-//
-//        if (resultDelete.Correct) {
-//            resultDelete.object = "El usuario " + IdDireccion + " se elimino de forma correcta";
-//        } else {
-//            resultDelete.object = "No fue posible eliminar";
-//        }
-//
-//        redirectAttributes.addFlashAttribute("resultDelete", resultDelete);
-//        return "redirect:/usuario/detail/"+IdUsuario;
-//    }
-    
-    
+    @GetMapping("deleteDireccion/{idUsuario}/{idDireccion}")
+    public String DeleteDireccion(
+            @PathVariable("idUsuario") int idUsuario,
+            @PathVariable("idDireccion") int idDireccion,
+            RedirectAttributes redirectAttributes) {
+
+        Result resultDelete = direccionJPADAOImplementation.delete(idDireccion);
+
+        if (resultDelete.Correct) {
+            resultDelete.object = "La direccion: " + idDireccion + " se elimino de forma correcta";
+        } else {
+            resultDelete.object = "No fue posible eliminar";
+        }
+
+        redirectAttributes.addFlashAttribute("resultDelete", resultDelete);
+        return "redirect:/usuario/detail/" + idUsuario;
+    }
+
     @GetMapping("getEstadosByPais/{idPais}")
     @ResponseBody
     public Result EstadosByPais(@PathVariable("idPais") int idPais) {

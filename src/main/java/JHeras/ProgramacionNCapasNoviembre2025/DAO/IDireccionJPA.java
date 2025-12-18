@@ -11,4 +11,6 @@ public interface IDireccionJPA {
     
     public Result edit(JHeras.ProgramacionNCapasNoviembre2025.ML.Direccion direccionML,int IdUsuario);
     
+    public Result delete(int idDireccion);
+    
 }
