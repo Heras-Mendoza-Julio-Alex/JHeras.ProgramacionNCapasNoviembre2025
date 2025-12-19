@@ -38,6 +38,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -125,10 +126,30 @@ public class UsuarioController {
         model.addAttribute("Usuario", usuario);
         return "FormUsu";
     }
+    
+    @GetMapping("formEdit")
+    public String FormEditable(Model model) {
+
+        Result result = RolDAOImplementation.getAll();
+        model.addAttribute("Roles", result.Objects);
+
+        Result Presult = paisDAOImplementation.getAll();
+        model.addAttribute("Paises", Presult.Objects);
+
+        Usuario usuario = new Usuario();
+        usuario.Direcciones = new ArrayList<>();
+        usuario.Direcciones.add(new Direccion());
+
+        model.addAttribute("Usuario", usuario);
+        return "formEditable";
+    }
 
     @PostMapping("add")
-    public String add(@Valid @ModelAttribute("Usuario") Usuario usuario,
-            BindingResult bindingResult, Model model) {
+    public String add(
+//            @Valid
+    @ModelAttribute("Usuario") Usuario usuario, @RequestParam("imagenFile") MultipartFile imagen,
+            BindingResult bindingResult, Model model) throws IOException {
+               
 
 //        if (bindingResult.hasErrors()) {
 //            model.addAttribute("Usuario", usuario);
@@ -138,9 +159,23 @@ public class UsuarioController {
         JHeras.ProgramacionNCapasNoviembre2025.JPA.Usuario usuarioJPA
                 = modelMapper.map(usuario, JHeras.ProgramacionNCapasNoviembre2025.JPA.Usuario.class);
 
+         if(imagen != null){
+            String extencion = imagen.getOriginalFilename().split("\\.")[1];
+            //imagen.png
+            //[imagen,png]
+            if(extencion.equals("png") || extencion.equals("jpg") || extencion.equals("jpeg")){
+               byte[] bytes = imagen.getBytes();
+              String base64Image = Base64.getEncoder().encodeToString(bytes);
+                usuarioJPA.SetImagen(base64Image);
+                
+            }
+            
+        }
+         usuarioJPA.setEstatus(1);
         Result result;
         if (usuarioJPA.getIdUsuario() == 0) {
             // Si el id es 0, agregamos un nuevo usuario
+            
             result = usuarioJPADAOImplementation.add(usuarioJPA);
         } else {
             // Si el id ya existe, hacemos update
@@ -253,7 +288,12 @@ public class UsuarioController {
     }
 
     @GetMapping("/formEditable")
-    public String Form(@RequestParam("idUsuario") int idUsuario, @RequestParam(required = false) Integer IdDireccion, Model model) {
+    public String 
+           Form(
+        @RequestParam(required = false) Integer idUsuario,
+        @RequestParam(required = false) Integer IdDireccion,
+        Model model
+    ) {
         if (IdDireccion == null) { // editar usuario
             Result result = usuarioDAOImplementation.GetByIDU(idUsuario);
 
@@ -284,41 +324,45 @@ public class UsuarioController {
 
             model.addAttribute("Usuario", result.object);
 
-            return "FormUsu";
+           
         } else {// Editar Direccion
             //Retornar formulario direccion con datos
-            //Result result = DireccionDAOImplementation.GetByIDUD(IdDireccion, idUsuario);
-//            Result result = DireccionDAOImplementation.getbyIDD(IdDireccion);
-//            
-//            Direccion direccion = (Direccion) result.object;
-//
-//            Usuario usuario = new Usuario();
-//            usuario.setIdUsuario(idUsuario);
-//
-//            usuario.Direcciones = new ArrayList<>();
-//            usuario.Direcciones.add(direccion);
-//            
-//            model.addAttribute("Paises", paisDAOImplementation.getAll().Objects);
-//            model.addAttribute("Usuario", result.object);
 
             Result result = DireccionDAOImplementation.GetByIDUD(IdDireccion, idUsuario);
             model.addAttribute("Paises", paisDAOImplementation.getAll().Objects);
             model.addAttribute("Usuario", result.object);
 
-            return "FormUsu";
+           
         }
+        return "formEditable";
     }
 
     @PostMapping("/formEditable")
-    public String Form(@ModelAttribute Usuario usuario, Model model) {
+    public String Form(
+            @ModelAttribute Usuario usuario, @RequestParam("imagenFile") MultipartFile imagen, Model model
+    ) throws IOException {
+        
+        if(imagen != null){
+            String extencion = imagen.getOriginalFilename().split("\\.")[1];
+            //imagen.png
+            //[imagen,png]
+            if(extencion.equals("png") || extencion.equals("jpg") || extencion.equals("jpeg")){
+               byte[] bytes = imagen.getBytes();
+              String base64Image = Base64.getEncoder().encodeToString(bytes);
+                usuario.setImagen(base64Image);
+                
+            }
+            
+        }
 
         if (usuario.getIdUsuario() == 0) {
-            ModelMapper modelMapper = new ModelMapper();
+          //  ModelMapper modelMapper = new ModelMapper();
 
-            JHeras.ProgramacionNCapasNoviembre2025.JPA.Usuario usuarioJPA = modelMapper.map(usuario, JHeras.ProgramacionNCapasNoviembre2025.JPA.Usuario.class);
+         //   JHeras.ProgramacionNCapasNoviembre2025.JPA.Usuario usuarioJPA = modelMapper.map(usuario, JHeras.ProgramacionNCapasNoviembre2025.JPA.Usuario.class);
 
-            Result resultadd = usuarioJPADAOImplementation.add(usuarioJPA);
+            Result resultadd = usuarioDAOImplementation.Add(usuario);
 
+            
         } else if (usuario.Direcciones.get(0).getIdDireccion() == -1) {
             //Actualizar usuario //probar sp
             //usuarioDAOImplementation.UpdateUsuarioid(usuario);
@@ -334,7 +378,8 @@ public class UsuarioController {
             //Actualizar Direccion //probar sp
             //         Result result = usuarioJPADAOImplementation.edit(usuario);
         }
-        return null;
+     
+        return "formEditable";
 
     }
 

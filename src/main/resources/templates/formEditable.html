@@ -14,7 +14,10 @@
     <body class="bg-light">
 
         <div class="container my-5">
-            <form method="post" th:object="${Usuario}" th:action="@{add}" class="p-4 border rounded shadow bg-white" enctype="multipart/form-data">
+            <form method="post"
+                  th:object="${Usuario}"
+                  th:action="@{/usuario/formEditable}"
+                  enctype="multipart/form-data">
                 <input type="hidden" th:field="*{idUsuario}" />
 
                 <h1 class="mb-4 text-center">Formulario de Usuario</h1>
@@ -47,13 +50,16 @@
                                 </div>
                                 <div class="text-danger" th:if="${#fields.hasErrors('ApellidoMaterno')}" th:errors="*{ApellidoMaterno}"></div>
                             </div>
+
                             <div class="card p-3 w-100 h-100">
                                 <label for="imagenFile" class="form-label fw-bold">Imagen</label>
                                 <input type="file" class="form-control mb-2" name="imagenFile" accept="image/png, image/jpeg, image/jpg" id="imagenFile">
-                                <img id="previewImage" style="max-width: 300px; max-height: auto" class="mx-auto" src="https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png"/>
+                            <img id="previewImage" style="max-width: 300px; max-height: auto" class="mx-auto" src="https://static-00.iconduck.com/assets.00/profile-default-icon-2048x2045-u3j7s5nj.png"/>
                             </div>
                         </div>
                     </section>
+
+
 
                     <!-- Contacto -->
                     <section class="mb-4">
@@ -140,6 +146,7 @@
                             <option th:each="rol : ${Roles}" th:text="${rol.Nombre}" th:value="${rol.idRol}"></option>
                         </select>
                     </section>
+
                 </div>
 
                 <!-- Dirección -->
@@ -282,7 +289,7 @@
                                     $("#ddlcolonia").empty();
                                     $("#ddlcolonia").append("<option value=0 selected>Selecciona una colonia</option>");
                                     $.each(data.Objects, function (i, colonia) {
-        //                                        $("#ddlcolonia").append("<option value=" + colonia.idColonia + ">" + colonia.nombre + "</option>");
+                                        //                                        $("#ddlcolonia").append("<option value=" + colonia.idColonia + ">" + colonia.nombre + "</option>");
                                         $("#ddlcolonia").append('<option value="' + colonia.idColonia + '">' + colonia.nombre + '</option>');
 
                                     })

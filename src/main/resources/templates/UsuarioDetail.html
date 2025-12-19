@@ -62,7 +62,7 @@
                             <span class="text-danger error-msg"></span>
                         </div>
 
-                        <!-- USERNAME Y PASSWORD -->
+                        <!-- USERNAME, PASSWORD E IMAGEN -->
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Username</label>
                             <input type="text" class="form-control" placeholder="username"
@@ -76,6 +76,8 @@
                                    th:field="${usuario.password}" oninput="password(event, this)">
                             <span class="text-danger error-msg"></span>
                         </div>
+
+
 
                         <!-- CORREO / TELÉFONOS -->
                         <div class="col-md-4 mb-3">
@@ -293,18 +295,16 @@
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label fw-bold d-block">Sexo</label>
 
-                                        <div class="btn-group" role="group">
-                                            <input type="radio" class="btn-check"
-                                                   th:field="${usuario.Sexo}" value="H" id="sexoH">
-                                            <label class="btn btn-outline-primary" for="sexoH">
-                                                <i class="bi bi-person"></i> Hombre
-                                            </label>
+                                        <div class="col-md-6">
 
-                                            <input type="radio" class="btn-check"
-                                                   th:field="${usuario.Sexo}" value="M" id="sexoM">
-                                            <label class="btn btn-outline-primary" for="sexoM">
-                                                <i class="bi bi-person-dress"></i> Mujer
-                                            </label>
+                                            <div class="btn-group" role="group">
+                                                <input type="radio" class="btn-check" name="sexo" id="sexoH" autocomplete="off" th:field="${usuario.sexo}" value="H">
+                                                <label class="btn btn-outline-primary" for="sexoH"><i class="bi bi-person"></i> Hombre</label>
+
+                                                <input type="radio" class="btn-check" name="sexo" id="sexoM" autocomplete="off" th:field="${usuario.sexo}" value="M">
+                                                <label class="btn btn-outline-primary" for="sexoM"><i class="bi bi-person-dress"></i> Mujer</label>
+                                                <input type="hidden" th:field="${usuario.Sexo}">
+                                            </div>
                                         </div>
 
                                     </div>
@@ -486,16 +486,14 @@
         console.log("IdDireccion recibido:", IdDireccion);
         $('#iddireccion').val(IdDireccion);
         if (IdDireccion === 0) {
-        // CREAR NUEVA DIRECCIÓN
+
         $('#Calle').val('');
         $('#NumeroExterior').val('');
         $('#NumeroInterior').val('');
-        // Reset dropdowns
         $('#ddlpais').val(0).trigger('change');
         $('#ddlestado').empty().append("<option value='0'>Selecciona un estado</option>");
         $('#ddlmunicipio').empty().append("<option value='0'>Selecciona un municipio</option>");
         $('#ddlcolonia').empty().append("<option value='0'>Selecciona una colonia</option>");
-        // Habilitar el evento para cuando el usuario seleccione un país
         $("#ddlpais").off("change").on("change", function () {
         const paisId = $(this).val();
         if (paisId != 0) {
@@ -631,30 +629,30 @@
 
 
         function enviarDireccion() {
-
+        /* Setear los Valores obtenidos. */
         const direccion = {
         idDireccion: $('#iddireccion').val(),
-                calle: $('#Calle').val(),
-                numeroExterior: $('#NumeroExterior').val(),
-                numeroInterior: $('#NumeroInterior').val(),
-                pais: $('#ddlpais').val(),
-                estado: $('#ddlestado').val(),
-                idmunicipio: $('#ddlmunicipio').val(),
-                colonia: {
-                idColonia: $('#ddlcolonia').val(),
-                        municipio: {
-                        idMunicipio: $('#ddlmunicipio').val(),
-                                estado: {
-                                idEstado: $('#ddlestado').val(),
-                                        pais: {
-                                        idPais: $('#ddlpais').val()
-                                        }
-                                }
-                        }
-                },
-                usuario: {
-                idUsuario: $('#idusuario').val()
-                }
+        calle: $('#Calle').val(),
+        numeroExterior: $('#NumeroExterior').val(),
+        numeroInterior: $('#NumeroInterior').val(),
+        pais: $('#ddlpais').val(),
+        estado: $('#ddlestado').val(),
+        idmunicipio: $('#ddlmunicipio').val(),
+        colonia: {
+        idColonia: $('#ddlcolonia').val(),
+            municipio: {
+            idMunicipio: $('#ddlmunicipio').val(),
+                    estado: {
+                    idEstado: $('#ddlestado').val(),
+                            pais: {
+                            idPais: $('#ddlpais').val()
+                            }
+                    }
+            }
+        },
+        usuario: {
+        idUsuario: $('#idusuario').val()
+        }
 
         };
         console.log($('#iddireccion').val());

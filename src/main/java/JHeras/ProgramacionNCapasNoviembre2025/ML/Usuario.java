@@ -67,6 +67,8 @@ public class Usuario {
     
     private Number estatus;
     
+    private String Imagen;
+    
     public Rol Rol;  
     public List<Direccion> Direcciones;
     
@@ -189,6 +191,14 @@ public class Usuario {
 
     public void setEstatus(Number estatus) {
         this.estatus = estatus;
+    }
+    
+    public String getImagen(){
+       return Imagen;
+    }
+    
+    public void setImagen(String Imagen){
+        this.Imagen=Imagen;
     }
         
 }

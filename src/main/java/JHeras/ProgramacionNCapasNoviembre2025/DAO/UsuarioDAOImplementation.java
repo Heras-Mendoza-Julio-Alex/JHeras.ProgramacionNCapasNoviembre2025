@@ -107,7 +107,7 @@ public class UsuarioDAOImplementation implements IUsuario {
 
         Result result = new Result();
         try {
-            result.Correct = jdbcTemplate.execute("{CALL ADDUSUARIOCDIRECCION(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}", (CallableStatementCallback<Boolean>) callableStatement -> {
+            result.Correct = jdbcTemplate.execute("{CALL ADDUSUARIOCDIRECCION(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}", (CallableStatementCallback<Boolean>) callableStatement -> {
 
                 callableStatement.setString(1, usuario.getNombre());
                 callableStatement.setString(2, usuario.getApellidoPaterno());
@@ -124,11 +124,12 @@ public class UsuarioDAOImplementation implements IUsuario {
                 callableStatement.setString(9, usuario.getCelular());
                 callableStatement.setString(10, usuario.getCurp());
                 callableStatement.setString(11, usuario.getPassword());
-                callableStatement.setInt(12, usuario.Rol.getIdRol());
-                callableStatement.setString(13, usuario.Direcciones.get(0).getCalle());
-                callableStatement.setString(14, usuario.Direcciones.get(0).getNumeroInterior());
-                callableStatement.setString(15, usuario.Direcciones.get(0).getNumeroExterior());
-                callableStatement.setInt(16, usuario.Direcciones.get(0).Colonia.getIdColonia());
+                callableStatement.setString(12, usuario.getImagen());
+                callableStatement.setInt(13, usuario.Rol.getIdRol());
+                callableStatement.setString(14, usuario.Direcciones.get(0).getCalle());
+                callableStatement.setString(15, usuario.Direcciones.get(0).getNumeroInterior());
+                callableStatement.setString(16, usuario.Direcciones.get(0).getNumeroExterior());
+                callableStatement.setInt(17, usuario.Direcciones.get(0).Colonia.getIdColonia());
 
                 callableStatement.executeUpdate();
                 return true;
